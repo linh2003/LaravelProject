@@ -9,9 +9,4 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
-
-    protected function currentLanguage()
-    {
-        return 1;
-    }
 }

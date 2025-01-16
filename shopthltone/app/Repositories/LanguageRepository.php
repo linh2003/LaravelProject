@@ -11,7 +11,5 @@ class LanguageRepository extends BaseRepository implements LanguageRepositoryInt
         $this->model = $languages;
     }
 
-    public function findCurrentLanguage(){
-        return $this->model->select('canonical')->where('current','=',1)->first();
-    }
+    
 }

@@ -37,7 +37,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label class="control-label">Họ tên&nbsp;<span class="text-danger">(*)</span></label>
-                                    <input type="text" placeholder="Fullname" class="form-control" name="fullname" value="{{ old('fullname',($user->fullname) ?? '') }}" />
+                                    <input type="text" placeholder="Name" class="form-control" name="name" value="{{ old('name',($user->name) ?? '') }}" />
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -85,10 +85,10 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label class="control-label">Role</label>
-                                    <select name="role" class="form-control setupSelect2 roles-option">
-										<option value="">-- Select role --</option>
-										@foreach($roles as $k => $role)
-											<option value="{{$role->id}}" {{((isset($user) && $user->role==$role->id) || (old('role')==$role->id))?'selected':''}}>{{$role->name}}</option>
+                                    <select name="role[]" class="form-control setupSelect2 roles-option" multiple="multiple">
+										<option value="0">-- Select role --</option>
+										@foreach($roles as $k => $r)
+										<option value="{{$r->id}}" {{old('role',(collect($user->roles)->contains('id',$r->id)))?'selected':''}}>{{$r->name}}</option>
 										@endforeach
 									</select>
                                 </div>
@@ -96,13 +96,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
 									<label class="control-label">Avatar</label>
-                                    <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-										<div class="form-control" data-trigger="fileinput">
-											<i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span>
-										</div>
-										<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="avatar"></span>
-										<a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-									</div>
+                                    <input type="text" class="form-control upload-image" name="image" value="{{ old('phone',($user->image) ?? '') }}" />
                                 </div>
                             </div>
                         </div>

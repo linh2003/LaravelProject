@@ -3,29 +3,31 @@ namespace App\Repositories\Interfaces;
 
 interface BaseRepositoryInterface
 {
-    public function getAll();
+    public function getAll($orderBy=['id','DESC'],$relation=[]);
     public function getDataPagination(
         $column=['*'],
         $condition=[],
         $join=[],
-        $perPage=20,
-        $extend=[],
-        $relations=[],
+        $perPage=0,
+        $extern=[],
+        $relation=[],
         $rawQuery=[],
-        $pagination=true,
+        $count=false,
         $orderBy=['id','DESC']
     );
+    public function createBatch($payload=[]);
     public function create($payload=[]);
-    public function update($id,$payload=[]);
-    public function updateByWhereIn(string $whereInField='',array $whereIn=[],array $payload=[]);
-
+    public function createPivot($model,$payload=[],$relation='');
+    public function updateByWhere($condition=[],$payload=[]);
+    public function update($id,$payload);
+    public function updateByWhereIn($whereInField, $whereIn=[], $payload=[]);
     public function delete($id);
-
+    public function forceDelete($id=0);
+    public function forceDeleteByCondition($condition=[]);
     public function findByID(
         int $id,
         $column=['*'],
         $relation=[]
     );
-    public function getCountByCondition($condition=[],$operator='=',$join=[]);
-    public function createPivot($model,$payload=[],$relation='');
+    
 }

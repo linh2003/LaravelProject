@@ -3,7 +3,7 @@ namespace App\Services\Interfaces;
 use Illuminate\Http\Request;
 
 interface UserServiceInterface{
-    public function getUsersPagination($request,$pagination=true);
+    public function getUsers($request,$pagination=true);
     public function create(Request $request);
     public function update($id,Request $req);
     public function changeStatus($post=[]);

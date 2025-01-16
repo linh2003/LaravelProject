@@ -14,7 +14,7 @@
                 '_token' : _token,
             }
             $.ajax({
-                url: '/ajax/dashboard/changestatus',
+                url: '/ajax/changestatus',
                 type : 'POST',
                 data: option,
                 dataType: 'json',
@@ -81,7 +81,7 @@
                 '_token' : _token,
             }
             $.ajax({
-                url: '/ajax/dashboard/changestatusall',
+                url: '/ajax/changestatusall',
                 type : 'POST',
                 data: option,
                 dataType: 'json',

@@ -22,7 +22,7 @@ class UserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fullname' => 'required',
+            'name' => 'required',
             'email' => 'required|email|unique:users|max:191',
             'pass' => 'required|min:6',
             'confirm_pass' => 'required|same:pass',
@@ -30,12 +30,13 @@ class UserStoreRequest extends FormRequest
     }
     public function messages() : array {
         return [
-            'fullname.required' => 'The fullname field is required.',
-            'email.required' => 'The email field is required.',
-            'email.unique' => 'The email must be unique',
-            'pass.required' => 'The password field is required.',
-            'confirm_pass.required' => 'The confirm password field is required.',
-            'confirm_pass.same' => 'The confirm password does not match the new password.',
+            'name.required' => 'Bạn chưa nhập tên người dùng.',
+            'email.required' => 'Bạn chưa nhập email người dùng.',
+            'email.email' => 'Email phải đúng định dạng abc@domain.xyz',
+            'email.unique' => 'Email đã tồn tại. Vui lòng nhập email khác',
+            'pass.required' => 'Bạn chưa nhập mật khẩu.',
+            'confirm_pass.required' => 'Bạn chưa nhập xác nhận mật khẩu.',
+            'confirm_pass.same' => 'Xác nhận mật khẩu không khớp với mật khẩu.',
         ];
     }
 }

@@ -74,7 +74,7 @@ class UserService implements UserServiceInterface
             return false;
         }
     }
-    public function getUsersPagination($request,$pagination=true){
+    public function getUsers($request,$count=false){
         $condition['keyword'] = addslashes($request->input('admin_user_keyword'));
         if($request->integer('publish')){
             $condition['publish'] = $request->integer('publish');
@@ -85,15 +85,15 @@ class UserService implements UserServiceInterface
             $perPage = 20;
         }
         $condition['role'] = $request['role'];
-        $users = $this->userRepository->getDataPagination(
+        $users = $this->userRepository->getUsers(
             '*',
             $condition,
             [],
             $perPage,
-            ['path'=>'admin/user'],
+            ['path'=>'admin/user/user'],
             [],
             [],
-            $pagination
+            $count
         );
         return $users;
     }
@@ -101,13 +101,14 @@ class UserService implements UserServiceInterface
         DB::beginTransaction();
         try {
             $payload = $request->except(['_token','confirm_pass','send']);
-            $payload['name'] = $payload['fullname'];
             $carbonDate = Carbon::createFromFormat('Y-m-d',$payload['birthday']);
             $payload['birthday'] = $carbonDate->format('Y-m-d H:i:s');
             $payload['password'] = Hash::make($payload['pass']);
             // dd($payload);
             $user = $this->userRepository->create($payload);
-            // dd($user);
+            if($user->id){
+                $user->roles()->sync($payload['role']);
+            }
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -117,14 +118,23 @@ class UserService implements UserServiceInterface
         }
     }
     public function update($id,Request $req){
+        // dd($req);
         DB::beginTransaction();
         try {
             $payload = $req->except(['_token','send']);
-            $payload['name'] = $payload['fullname'];
-            $carbonDate = Carbon::createFromFormat('Y-m-d',$payload['birthday']);
-            $payload['birthday'] = $carbonDate->format('Y-m-d H:i:s');
             // dd($payload);
-            $user = $this->userRepository->update($id,$payload);
+            if($payload['birthday'] != null){
+                $carbonDate = Carbon::createFromFormat('Y-m-d',$payload['birthday']);
+                $payload['birthday'] = $carbonDate->format('Y-m-d H:i:s');
+            }
+            // dd($payload);
+            $flag = $this->userRepository->update($id,$payload);
+            if ($flag) {
+                $user = $this->userRepository->findByID($id);
+                $role = $payload['role'];
+                // dd($payload);
+                $user->roles()->sync($role);
+            }
             DB::commit();
             return true;
         } catch (\Exception $e) {

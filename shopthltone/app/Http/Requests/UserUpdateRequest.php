@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -23,15 +22,16 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fullname' => 'required',
+            'name' => 'required',
             'email' => 'required|email|max:191|unique:users,email,'.$this->id,
         ];
     }
     public function messages() : array {
         return [
-            'fullname.required' => 'The fullname field is required.',
-            'email.required' => 'The email field is required.',
-            'email.unique' => 'The email must be unique',
+            'name.required' => 'Bạn chưa nhập tên người dùng.',
+            'email.required' => 'Bạn chưa nhập email người dùng.',
+            'email.email' => 'Email phải đúng định dạng abc@domain.xyz',
+            'email.unique' => 'Email phải là duy nhất',
         ];
     }
 }

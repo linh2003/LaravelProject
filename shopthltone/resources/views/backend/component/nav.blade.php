@@ -12,7 +12,7 @@
             <li class="language-dropdown">
                 <div class="m-r-sm dropdown language-toggle">
 					@foreach($languages as $k => $lang)	
-						@if($lang->current==1)
+						@if($lang->active==1)
 						<a data-toggle="dropdown" class="dropdown-toggle language-current" href="#">
 							<img alt="icon-vn" class="icon-language" src="{{asset($lang->image)}}" />
 						</a>

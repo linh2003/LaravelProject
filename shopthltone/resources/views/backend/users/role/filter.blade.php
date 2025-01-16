@@ -1,4 +1,4 @@
-<form action="{{ route('user.roles') }}" method="get">
+<form action="{{ route('user.role') }}" method="get">
 	<div class="d-flex justify-content-end">
 		<div class="search-info">
 			<input type="text" name="user_role_keyword" placeholder="Search..." class=" form-control" value="{{ request('user_role_keyword') ?? old('user_role_keyword') }}"> 
