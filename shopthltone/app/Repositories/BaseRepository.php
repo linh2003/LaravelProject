@@ -11,68 +11,39 @@ class BaseRepository implements BaseRepositoryInterface
     public function __construct(Model $model){
         $this->model = $model;
     }
-    public function getAll($orderBy=['ASC','id']){
-        if($orderBy[0] == 'DESC'){
-            return $this->model->orderByDesc($orderBy[1])->get();
+    public function delete($id){
+        return $this->findByID($id)->delete();
+    }
+    public function forceDelete($id=0){
+        return $this->findByID($id)->forceDelete();
+    }
+    public function forceDeleteByCondition($condition=[]){
+        $query = $this->model->newQuery();
+        foreach ($condition as $key => $val) {
+            $query->where($val[0],$val[1],$val[2]);
         }
-        return $this->model->all();
+        return $query->forceDelete();
     }
-    public function getCountByCondition($condition=[],$operator='=',$join=[]){
-        $query = $this->model->where(function($query) use ($condition,$operator){
-            foreach ($condition as $key => $val) {
-                $query->where($key,$operator,$val);
-            }
-        });
-        // if(!empty($join)){
-        //     $query->join(...$join);
-        // }
-        if(isset($join) && is_array($join) && count($join)){
-            foreach ($join as $key => $val) {
-                $query->join($val[0],$val[1],$val[2],$val[3]);
-            }
-        }
-        return $query->count();
-    }
-    public function getDataPagination(
-        $column=['*'],
-        $condition=[],
-        $join=[],
-        $perPage=20,
-        $extend=[],
-        $relations=[],
-        $rawQuery=[],
-        $pagination=true,
-        $orderBy=['id','DESC']
-    ){
-        $query = $this->model->select($column);
-        $query->keyword($condition['keyword']??null)
-            ->publish($condition['publish']??null)
-            ->customWhere($condition['where']??null)
-            ->customWhereRaw($rawQuery['whereRaw']??null)
-            ->relationCount($relations??null)
-            ->customJoin($join??null)
-            ->customGroupBy($extend['groupBy']??null)
-            ->customOrderBy($orderBy??null);
-        
-        if(!$pagination){
-            return $query->get()->count();
-        }
-        
-        return $query->paginate($perPage)->withQueryString()->withPath('/'.$extend['path']);
-    }
-    
-    public function create($payload=[]){
-        $ret = $this->model->create($payload);
-        return $ret->fresh();
-    }
-    public function update($id,$payload=[]){
-        $m = $this->findByID($id);
-        return $m->update($payload);
-    }
-    public function updateByWhereIn(string $whereInField='',array $whereIn=[],array $payload=[]){
+
+    public function updateByWhereIn($whereInField, $whereIn=[], $payload=[]){
         $query = $this->model->whereIn($whereInField,$whereIn)->update($payload);
         return $query;
     }
+
+    public function update($id,$payload){
+        $m = $this->findByID($id);
+        return $m->update($payload);
+    }
+
+    public function findByID(
+        int $id,
+        $column=['*'],
+        $relation=[]
+    )
+    {
+        return $this->model->select($column)->with($relation)->findOrFail($id);
+    }
+
     public function updateByWhere($condition=[],$payload=[]){
         $query = $this->model->newQuery();
         foreach ($condition as $key => $val) {
@@ -80,22 +51,51 @@ class BaseRepository implements BaseRepositoryInterface
         }
         return $query->update($payload);
     }
-    public function delete($id){
-        return $this->findByID($id)->delete();
-    }
-    public function forceDelete(int $id=0){
-        return $this->findByID($id)->forceDelete();
-    }
-    public function findByID(
-        int $id,
-        $column=['*'],
-        $relation=[]
-    ){
-        return $this->model->select($column)->with($relation)->findOrFail($id);
+    public function createBatch($payload=[]){
+        return $this->model->insert($payload);
     }
     public function createPivot($model,$payload=[],$relation=''){
         return $model->languages()->attach($model->id,$payload);
     }
+
+    public function create($payload=[]){
+        $ret = $this->model->create($payload);
+        return $ret->fresh();
+    }
+
+    public function getAll($orderBy=['id','DESC'],$relation=[]){
+        if (isset($orderBy[1]) && $orderBy[1]=='ASC') {
+            return $this->model->with($relation)->get();
+        }
+        return $this->model->with($relation)->orderByDesc($orderBy[0])->get();
+    }
+    public function getDataPagination(
+        $column=['*'],
+        $condition=[],
+        $join=[],
+        $perPage=0,
+        $extern=[],
+        $relation=[],
+        $rawQuery=[],
+        $count=false,
+        $orderBy=['id','DESC']
+    )
+    {
+        $query = $this->model->select($column);
+        $query->keyword($condition['keyword']??null)
+        ->publish($condition['publish']??null)
+        ->customWhere($condition['where']??null)
+        ->customWhereRaw($rawQuery['whereRaw']??null)
+        ->relationCount($relation??null)
+        ->customJoin($join??null)
+        ->customGroupBy($extern['groupBy']??null)
+        ->customOrderBy($orderBy??null);
+        if($count){
+            return $query->get()->count();
+        }
+        return $query->paginate($perPage)->withQueryString()->withPath('/'.$extern['path']);
+    }
+    
 }
 
 

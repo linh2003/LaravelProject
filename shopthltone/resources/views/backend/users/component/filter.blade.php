@@ -3,17 +3,7 @@
 		<div class="search-info">
 			<input type="text" name="admin_user_keyword" placeholder="Search..." class=" form-control" value="{{ request('admin_user_keyword') ?? old('admin_user_keyword') }}"> 
 		</div>
-		<div class="roles ml-3">
-		@php
-			$roleRequest = request('role') ?? old('role')
-		@endphp
-			<select name="role" class="form-control setupSelect2 roles-option">
-				<option value="">Select role</option>
-				@foreach($roles as $k => $role)
-					<option value="{{$role->id}}" {{$roleRequest==$role->id?'selected':''}}>{{$role->name}}</option>
-				@endforeach
-			</select>
-		</div>
+		
 		<div class="status ml-3 {{request('publish')}} middle {{old('publish')}}">
 		@php
 			$publish = request('publish') ?? old('publish');

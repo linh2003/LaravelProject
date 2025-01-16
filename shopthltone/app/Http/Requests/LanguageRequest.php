@@ -23,14 +23,14 @@ class LanguageRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'canonical' => 'required|unique:post_catalogue_languages',
+            'canonical' => 'required|unique:languages',
         ];
     }
     public function messages() : array {
         return [
-            'name.required' => 'The language name field is required.',
-            'canonical.required' => 'The language canonical field is required.',
-            'canonical.unique' => 'Đường dẫn đã tồn tại. Vui lòng nhập đường dẫn khác',
+            'name.required' => 'Bạn chưa nhập tên của ngôn ngữ.',
+            'canonical.required' => 'Bạn chưa nhập machine name của ngôn ngữ.',
+            'canonical.unique' => 'Machine name đã tồn tại. Vui lòng nhập machine name khác!',
         ];
     }
 }

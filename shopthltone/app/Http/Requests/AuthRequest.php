@@ -26,11 +26,11 @@ class AuthRequest extends FormRequest
             'pwd' => 'required',
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
-            'log.required' => 'A username is required',
-            'pwd.required' => 'A password is required'
+            'log.required' => 'Username or Email Address is required.',
+            'log.email' => 'Bạn phải nhập đúng định dạng email',
+            'pwd.required' => 'Password is required.',
         ];
     }
-    
 }
