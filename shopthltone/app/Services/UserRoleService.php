@@ -15,7 +15,7 @@ class UserRoleService implements UserRoleServiceInterface
         $this->userRoleRepository = $userRoleRepository;
     }
     
-    public function getRolePagination($request){
+    public function getRoles($request, $count=false){
         $condition['keyword'] = addslashes($request->input('user_role_keyword'));
         // dd($condition);
         $perPage = $request->integer('perpage');
@@ -27,7 +27,10 @@ class UserRoleService implements UserRoleServiceInterface
             $condition,
             [],
             $perPage,
-            ['path'=>'admin/user']
+            ['path'=>'admin/user/role'],
+            [],
+            [],
+            $count
         );
         return $roles;
     }
@@ -62,7 +65,7 @@ class UserRoleService implements UserRoleServiceInterface
     public function destroy($id){
         DB::beginTransaction();
         try {
-            $user = $this->userRepository->delete($id);
+            $user = $this->userRoleRepository->delete($id);
             DB::commit();
             return true;
         } catch (\Exception $e) {

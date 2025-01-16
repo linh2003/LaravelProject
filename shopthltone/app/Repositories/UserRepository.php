@@ -7,47 +7,37 @@ use App\Repositories\BaseRepository;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
-    // protected $model;
-    public function __construct(User $u){
-        $this->model = $u;
+    public function __construct(User $user){
+        $this->model = $user;
     }
-    public function getDataPagination(
+    public function getUsers(
         $column=['*'],
         $condition=[],
         $join=[],
-        $perPage=20,
-        $extend=[],
-        $relations=[],
+        $perPage=0,
+        $extern=[],
+        $relation=[],
         $rawQuery=[],
-        $pagination=true,
+        $count=false,
         $orderBy=['id','DESC']
-    ){
-        $query = $this->model->select($column)->where(function($query) use ($condition){
-            if (isset($condition['keyword']) && !empty($condition['keyword'])) {
-                $query->where('name','LIKE','%'.$condition['keyword'].'%')
-                ->orWhere('email','LIKE','%'.$condition['keyword'].'%')
-                ->orWhere('phone','LIKE','%'.$condition['keyword'].'%')
-                ->orWhere('address','LIKE','%'.$condition['keyword'].'%');
-            }
-            
-        });
-        if (isset($condition['publish']) && $condition['publish'] != -1) {
-            $query->where('publish','=',$condition['publish']);
+    )
+    {
+        $query = $this->model->select($column);
+        $query->keyword($condition['keyword']??null)
+        ->orWhere('email','LIKE','%'.$condition['keyword'].'%')
+        ->orWhere('phone','LIKE','%'.$condition['keyword'].'%')
+        ->orWhere('address','LIKE','%'.$condition['keyword'].'%')
+        ->publish($condition['publish']??null)
+        ->customWhere($condition['where']??null)
+        ->customWhereRaw($rawQuery['whereRaw']??null)
+        ->relationCount($relation??null)
+        ->customJoin($join??null)
+        ->customGroupBy($extern['groupBy']??null)
+        ->customOrderBy($orderBy??null);
+        if($count){
+            return $query->get()->count();
         }
-        if (isset($condition['role']) && !empty($condition['role'])) {
-            $query->where('role','=',$condition['role']);
-        }
-        $query->orderBy($orderBy[0],$orderBy[1]);
-        if(!empty($join)){
-            $query->join(...$join);
-        }
-        if(!$pagination){
-            return $query->count();
-        }
-        // echo $query->toSql();die();
-        return $query->paginate($perPage)->withQueryString()->withPath('/'.$extend['path']);
+        return $query->paginate($perPage)->withQueryString()->withPath('/'.$extern['path']);
     }
     
 }
-
-

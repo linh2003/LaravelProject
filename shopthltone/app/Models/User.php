@@ -4,10 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\QueryScopes;
 
 class User extends Authenticatable
@@ -21,13 +21,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
-        'fullname',
         'phone',
+        'email',
+        'image',
         'birthday',
         'address',
         'publish',
-        'role',
         'password',
     ];
 
@@ -51,9 +50,20 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $table = 'users';
+
+    // protected $with = ['roles.permissions'];
+
+
     public function roles(){
-        return $this->belongsTo(Role::class,'role','id');
+        return $this->belongsToMany(Role::class,'user_role','user_id','role_id');
     }
 
+    public function hasPermission($permissionCanonical){
+        return $this->roles->permissions->contains('canonical',$permissionCanonical);
+    }
 
+    // public function roles(){
+    //     return $this->belongsTo(Role::class,'role','id');
+    // }
 }

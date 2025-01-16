@@ -5,6 +5,16 @@ use Illuminate\Support\Facades\Auth;
 
 class Nestedsetbie{
 
+	protected $params;
+	protected $checked;
+	protected $data;
+	protected $count;
+	protected $count_level;
+	protected $lft;
+	protected $rgt;
+	protected $level;
+	protected $suffix;
+
 	function __construct($params = NULL){
 		$this->params = $params;
 		$this->checked = NULL;
@@ -14,10 +24,11 @@ class Nestedsetbie{
 		$this->lft = NULL;
 		$this->rgt = NULL;
 		$this->level = NULL;
+		$this->suffix = isset($params['suffix']) ? $params['suffix'] : 'catalogue';
 	}
 
 	public function Get(){
-		$catalogue = (isset($this->params['isMenu']) && $this->params['isMenu'] == true ) ? '' : '_catalogue';
+		$catalogue = (isset($this->params['isMenu']) && $this->params['isMenu'] == true ) ? '' : ('_'.$this->suffix);
 		$foreignkey = (isset($this->params['foreignkey'])) ? $this->params['foreignkey'] : 'post_catalogue_id';
 		$moduleExtract = explode('_', $this->params['table']);
 		$join = (isset($this->params['isMenu']) && $this->params['isMenu'] == true ) ? substr($moduleExtract[0], 0, -1) : $moduleExtract[0];

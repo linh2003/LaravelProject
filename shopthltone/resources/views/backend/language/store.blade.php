@@ -1,14 +1,8 @@
-@include(
-	'backend.component.breadcrumb',
-	[
-		'breadcrumb_before' => $heading['index']['title'],
-		'breadcrumb_after'  => (isset($method) && $method=='create') ? $heading['create']['title'] : $heading['update']['title']
-	]
-)
+
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-4">
-            <div class="panel-title"> {{ (isset($method) && $method=='create') ? $heading['create']['title'] : $heading['update']['title'] }} </div>
+            <div class="panel-title"> </div>
 			<div class="panel-description">
 				<p>- Lưu ý: Những trường đánh dấu <span class="text-danger">(*)</span> là thông tin bắt buộc</p>
 			</div>
@@ -27,10 +21,10 @@
         <div class="col-lg-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-				@php
-				$action = (isset($method) && $method=='create') ? route('admin.language.store') : route('admin.language.update',$language->id)
-				@endphp
-                    <form method="POST" action="{{ $action }}">
+					@php
+					$action = (isset($method) && $method=='create') ? route('admin.language.store') : route('admin.language.update',$language->id)
+					@endphp
+                    <form method="POST" action="{{$action}}">
                         @csrf
                         <div class="row">
                             <div class="col-sm-6">
@@ -54,9 +48,9 @@
 										<option value="">-- Select author --</option>
 										@foreach($users as $k => $u)
 											@if($method=='create')
-											<option value="{{$u->id}}" {{$u->id==$uidLogged?'selected':''}}>{{$u->fullname}} - {{$u->name}}</option>
+											<option value="{{$u->id}}" {{$u->id==$uidLogged?'selected':''}}>{{$u->name}}</option>
 											@else
-											<option value="{{$u->id}}" {{$language->user_id==$u->id?'selected':''}}>{{$u->fullname}} - {{$u->name}}</option>
+											<option value="{{$u->id}}" {{$language->user_id==$u->id?'selected':''}}>{{$u->name}}</option>
 											@endif
 										@endforeach
 									</select>
@@ -65,14 +59,8 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
 									<label class="control-label">Image</label>
-                                    <!--<div class="fileinput fileinput-new input-group" data-provides="fileinput">
-										<div class="form-control url-image" data-trigger="fileinput">
-											<i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span>
-										</div>
-										<span class="input-group-addon btn btn-default btn-file upload-image"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="image" class="ip-upload-image" data-type="Image"></span>
-										<a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-									</div>-->
-									<input type="text" name="image" class="form-control upload-image" data-type="Images" value="{{ old('image',($language->image) ?? '') }}">
+                                    
+									<input type="text" name="image" class="form-control upload-image" data-type="Images" value="">
                                 </div>
                             </div>
                         </div>

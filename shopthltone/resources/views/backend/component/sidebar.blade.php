@@ -23,21 +23,43 @@ $seg3 = request()->segment(3);
                     IN+
                 </div>
             </li>
-            
-            
-			@foreach(__('sidebar.module') as $k => $c)
-			@php $sub = $seg2.(!empty($seg3)?('.'.$seg3):''); @endphp
-			<li class="{{($c['name']==$seg2)?'active':''}}">
-                <a href="{{(!isset($c['submodule']))?route($c['route']):'#'}}"><i class="fa fa-{{isset($c['icon'])?$c['icon']:''}}"></i> <span class="nav-label">{{isset($c['title'])?$c['title']:''}}</span><span class="fa {{isset($c['submodule'])?'arrow':''}}"></span></a>
-				@if(isset($c['submodule']))
-					<ul class="nav nav-second-level collapse {{($c['name']==$seg2)?'in':''}}">
-					@foreach($c['submodule'] as $sm)
-						<li class="{{$sub==$sm['name']?'active':''}}" data-name="{{$sub}}"><a href="{{route($sm['route'])}}">{{$sm['title']}}</a></li>
+			@foreach(__('sidebar.module') as $k => $m)
+				<li class="{{($m['name']==$seg2)?'active':''}}">
+					<a href="#">
+						<i class="fa fa-{{$m['icon']}}"></i> 
+						<span class="nav-label">{{$m['title']}}</span>
+						@if(isset($m['sub']))<span class="fa arrow"></span>@endif
+					</a>
+					@if(isset($m['sub']))
+					<ul class="nav nav-second-level collapse {{$seg3}}">
+					@foreach($m['sub'] as $key => $sub)
+						<li class="{{($seg3==$sub['name'])?'active':''}}"><a href="{{route($sub['route'])}}">{{$sub['title']}}</a></li>
 					@endforeach
 					</ul>
-				@endif
-            </li>
+					@endif
+				</li>
 			@endforeach
+            <!--<li>
+				<a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa arrow"></span></a>
+				<ul class="nav nav-second-level collapse">
+					<li><a href="table_basic.html">Static Tables</a></li>
+					<li><a href="table_data_tables.html">Data Tables</a></li>
+					<li><a href="table_foo_table.html">Foo Tables</a></li>
+					<li><a href="jq_grid.html">jqGrid</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">E-commerce</span><span class="fa arrow"></span></a>
+				<ul class="nav nav-second-level collapse">
+					<li><a href="ecommerce_products_grid.html">Products grid</a></li>
+					<li><a href="ecommerce_product_list.html">Products list</a></li>
+					<li><a href="ecommerce_product.html">Product edit</a></li>
+					<li><a href="ecommerce_product_detail.html">Product detail</a></li>
+					<li><a href="ecommerce-cart.html">Cart</a></li>
+					<li><a href="ecommerce-orders.html">Orders</a></li>
+					<li><a href="ecommerce_payments.html">Credit Card form</a></li>
+				</ul>
+			</li>-->
         </ul>
     </div>
 </nav>

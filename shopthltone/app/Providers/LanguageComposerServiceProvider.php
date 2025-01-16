@@ -2,19 +2,20 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Repositories\LanguageRepository;
 use Illuminate\Support\Facades\View;
-use App\Repositories\Interfaces\LanguageRepositoryInterface as LanguageRepository;
+use Illuminate\Support\ServiceProvider;
 
 class LanguageComposerServiceProvider extends ServiceProvider
 {
-
     /**
      * Register services.
      */
     public function register(): void
     {
-        $this->app->bind('App\Repositories\Interfaces\LanguageRepositoryInterface','App\Repositories\LanguageRepository');
+        $this->app->bind(
+            'App\Repositories\Interfaces\LanguageRepositoryInterface', 'App\Repositories\LanguageRepository'
+        );
     }
 
     /**
@@ -22,7 +23,7 @@ class LanguageComposerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('backend.component.nav', function ($view) {
+        View::composer('backend.component.nav',function($view){
             $languageRepository = $this->app->make(LanguageRepository::class);
             $languages = $languageRepository->getAll();
             $view->with('languages',$languages);

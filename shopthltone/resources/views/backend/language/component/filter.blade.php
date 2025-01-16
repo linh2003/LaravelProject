@@ -1,7 +1,7 @@
 <form action="{{ route('admin.language') }}" method="get">
 	<div class="d-flex justify-content-end">
 		<div class="search-info">
-			<input type="text" name="language_keyword" placeholder="Search..." class=" form-control" value="{{ request('language_keyword') ?? old('language_keyword') }}"> 
+			<input type="text" name="keyword" placeholder="Search..." class=" form-control" value="{{ request('keyword') ?? old('keyword') }}"> 
 		</div>
 		<div class="perpage ml-3">
 		@php
