@@ -26,7 +26,7 @@ class AttributeUpdateRequest extends FormRequest
             'canonical' => 'required|unique:routers,canonical,'.$this->id.',module_id',
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
             'name.required' => __('attribute.message.request.name'),
             'canonical.required' => __('attribute.message.request.canonical.required'),

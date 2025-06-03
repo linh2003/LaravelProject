@@ -1,8 +1,8 @@
 <?php
 return [
-	'module' => [
+    'module' => [
 		[
-			'title' => 'All Product',
+			'title' => 'Manage Product',
 			'icon' => 'archive',
 			'name' => 'product',
 			'sub' => [
@@ -12,23 +12,40 @@ return [
 					'name' 	=> 'product',
 				],
 				[
+					'title' => 'Product Catalogue',
+					'route' => 'product.catalogue.create',
+					'name' 	=> 'catalogue',
+				],
+				[
 					'title' => 'Attribute Type',
-					'route' => 'product.attype',
-					'name' 	=> 'attype',
+					'route' => 'product.attributetype',
+					'name' 	=> 'attributetype',
 				],
 				[
 					'title' => 'Attribute',
 					'route' => 'product.attribute',
 					'name' 	=> 'attribute',
-				],
-				[
-					'title' => 'Product Catalogue',
-					'route' => 'product.catalogue',
-					'name' 	=> 'productcat',
-				],
+				]
 			]
 		],
 		[
+			'title' => 'Promotion manage',
+			'icon' => 'gift',
+			'name' => 'promotion',
+			'sub' => [
+				[
+					'title' => 'Promotion',
+					'route' => 'admin.promotion',
+					'name' 	=> 'promotion',
+				],
+				// [
+				// 	'title' => 'Sale',
+				// 	'route' => 'admin.sale',
+				// 	'name' 	=> 'sale',
+				// ],
+			]
+		],
+        [
 			'title' => 'Users',
 			'icon' => 'user',
 			'name' => 'user',
@@ -40,49 +57,42 @@ return [
 				],
 				[
 					'title' => 'Role',
-					'route' => 'admin.user',
+					'route' => 'user.role',
 					'name' 	=> 'role',
 				],
 				[
 					'title' => 'Permission',
-					'route' => 'admin.user',
+					'route' => 'user.permission',
 					'name' 	=> 'permission',
 				],
-				[
-					'title' => 'Department',
-					'route' => 'admin.user',
-					'name' 	=> 'department',
-				],
+				// [
+				// 	'title' => 'Phòng ban',
+				// 	'route' => 'admin.user',
+				// 	'name' 	=> ['department','create','edit','delete'],
+				// ],
 			]
 		],
-		[
-			'title' => 'Posts',
-			'icon' => 'thumb-tack',
-			'name' => 'post',
-			'sub' => [
-				[
-					'title' => 'All Posts',
-					'route' => 'admin.user',
-					'name' 	=> 'post',
-				],
-				[
-					'title' => 'Post Catalogues',
-					'route' => 'admin.user',
-					'name' 	=> 'postcatalogue',
-				]
-			]
-		],
-		[
+        [
 			'title' => 'Configuration',
 			'icon' => 'cog',
 			'name' => 'configuration',
 			'sub' => [
 				[
-					'title' => 'Languages',
+					'title' => 'Language',
 					'route' => 'admin.language',
-					'name' 	=> 'language',
-				]
+					'name' 	=> ['language','create','edit','delete'],
+				],
+				// [
+				// 	'title' => 'Quản lý hệ thống',
+				// 	'route' => 'admin.system',
+				// 	'name' 	=> ['system','create','edit','delete'],
+				// ],
+				// [
+				// 	'title' => 'Quản lý menu',
+				// 	'route' => 'admin.menu',
+				// 	'name' 	=> ['menu','create','edit','delete'],
+				// ]
 			]
 		]
-	]
+    ]
 ];

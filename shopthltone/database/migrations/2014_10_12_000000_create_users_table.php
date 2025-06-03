@@ -14,18 +14,20 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->text('image')->nullable();
-            $table->dateTime('birthday')->nullable();
-            $table->text('address')->nullable();
-            $table->tinyInteger('publish')->default(1);
-            $table->bigInteger('role')->nullable();
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone', 20)->nullable();
+            $table->text('image')->nullable();
+            $table->dateTime('birthday')->nullable();
+            $table->string('province_id',10)->nullable();
+            $table->string('district_id',10)->nullable();
+            $table->string('ward_id',10)->nullable();
+            $table->text('address')->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->rememberToken();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

@@ -1,51 +1,51 @@
 <?php
 return [
-	'module' => [
+    'module' => [
 		[
-			'title' => 'Sản phẩm',
+			'title' => 'Quản lý sản phẩm',
 			'icon' => 'archive',
 			'name' => 'product',
 			'sub' => [
 				[
-					'title' => 'Quản lý sản phẩm',
+					'title' => 'Sản phẩm',
 					'route' => 'admin.product',
 					'name' 	=> 'product',
 				],
 				[
-					'title' => 'Quản lý nhóm thuộc tính',
-					'route' => 'product.attype',
-					'name' 	=> 'attype',
-				],
-				[
-					'title' => 'Quản lý thuộc tính',
-					'route' => 'product.attribute',
-					'name' 	=> 'attribute',
-				],
-				[
 					'title' => 'Danh mục sản phẩm',
 					'route' => 'product.catalogue.create',
-					'name' 	=> 'productcat',
+					'name' 	=> 'catalogue',
 				],
+				[
+					'title' => 'Nhóm thuộc tính',
+					'route' => 'product.attributetype',
+					'name' 	=> 'attributetype',
+				],
+				[
+					'title' => 'Thuộc tính',
+					'route' => 'product.attribute',
+					'name' 	=> 'attribute',
+				]
 			]
 		],
-		// [
-		// 	'title' => 'Bài viết',
-		// 	'icon' => 'thumb-tack',
-		// 	'name' => 'post',
-		// 	'sub' => [
-		// 		[
-		// 			'title' => 'Quản lý bài viết',
-		// 			'route' => 'admin.user',
-		// 			'name' 	=> ['post'],
-		// 		],
-		// 		[
-		// 			'title' => 'Quản lý nhóm bài viết',
-		// 			'route' => 'admin.user',
-		// 			'name' 	=> ['postcatalogue','create','edit','delete'],
-		// 		]
-		// 	]
-		// ],
 		[
+			'title' => 'Quản lý khuyến mại',
+			'icon' => 'gift',
+			'name' => 'promotion',
+			'sub' => [
+				[
+					'title' => 'Khuyến mại',
+					'route' => 'admin.promotion',
+					'name' 	=> 'promotion',
+				],
+				// [
+				// 	'title' => 'Giảm giá',
+				// 	'route' => 'admin.sale',
+				// 	'name' 	=> 'sale',
+				// ],
+			]
+		],
+        [
 			'title' => 'Nhân sự',
 			'icon' => 'user',
 			'name' => 'user',
@@ -53,26 +53,26 @@ return [
 				[
 					'title' => 'Quản lý nhân sự',
 					'route' => 'admin.user',
-					'name' 	=> ['user','create','edit','delete'],
+					'name' 	=> 'user',
 				],
 				[
 					'title' => 'Vai trò',
 					'route' => 'user.role',
-					'name' 	=> ['role','create','edit','delete'],
+					'name' 	=> 'role',
 				],
 				[
 					'title' => 'Phân quyền',
 					'route' => 'user.permission',
-					'name' 	=> ['permission','create','edit','delete'],
+					'name' 	=> 'permission',
 				],
-				[
-					'title' => 'Phòng ban',
-					'route' => 'admin.user',
-					'name' 	=> ['department','create','edit','delete'],
-				],
+				// [
+				// 	'title' => 'Phòng ban',
+				// 	'route' => 'admin.user',
+				// 	'name' 	=> ['department','create','edit','delete'],
+				// ],
 			]
 		],
-		[
+        [
 			'title' => 'Cài đặt',
 			'icon' => 'cog',
 			'name' => 'configuration',
@@ -80,9 +80,19 @@ return [
 				[
 					'title' => 'Quản lý ngôn ngữ',
 					'route' => 'admin.language',
-					'name' 	=> ['language','create','edit','delete'],
-				]
+					'name' 	=> 'language',
+				],
+				[
+					'title' => 'Quản lý hệ thống',
+					'route' => 'admin.system',
+					'name' 	=> 'system',
+				],
+				// [
+				// 	'title' => 'Quản lý menu',
+				// 	'route' => 'admin.menu',
+				// 	'name' 	=> ['menu','create','edit','delete'],
+				// ]
 			]
 		]
-	]
+    ]
 ];

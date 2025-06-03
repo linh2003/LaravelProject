@@ -11,20 +11,20 @@
         <ul class="nav navbar-top-links navbar-right">
             <li class="language-dropdown">
                 <div class="m-r-sm dropdown language-toggle">
-					@foreach($languages as $k => $lang)	
+					@foreach($language['all'] as $k => $lang)	
 						@if($lang->active==1)
 						<a data-toggle="dropdown" class="dropdown-toggle language-current" href="#">
-							<img alt="icon-vn" class="icon-language" src="{{asset($lang->image)}}" />
+							<img alt="icon-{{$lang->canonical}}" class="icon-language" src="{{asset($lang->image)}}" />
 						</a>
 						@php break; @endphp
 						@endif
 					@endforeach
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-						@foreach($languages as $k => $lang)
+						@foreach($language['all'] as $k => $lang)
 							
-							<li class="{{($lang->current==1)?'active':''}}">
+							<li class="{{($lang->active==1)?'active':''}}">
 								<a href="{{route('language.switch',['id'=>$lang->id])}}">
-									<img alt="icon-vn" class="icon-language" src="{{asset($lang->image)}}" />
+									<img alt="icon-{{$lang->canonical}}" class="icon-language" src="{{asset($lang->image)}}" />
 									<span>{{$lang->name}}</span>
 								</a>
 							</li>
@@ -130,7 +130,7 @@
 
 
             <li>
-                <a href="{{route('auth.logout')}}">
+                <a href="{{route('logout')}}">
                     <i class="fa fa-sign-out"></i> Log out
                 </a>
             </li>

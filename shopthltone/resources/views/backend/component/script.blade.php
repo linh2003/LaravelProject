@@ -5,10 +5,10 @@
 <script src="{{asset('backend/js/plugins/slimscroll/jquery.slimscroll.min.js')}}"></script>
 <script src="{{asset('backend/js/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
 <script src="{{asset('backend/js/libraries/inspinia.js')}}"></script>
-{{-- <script src="{{asset('backend/js/customize.js')}}"></script> --}}
+<script src="{{asset('backend/js/plugins/pace/pace.min.js')}}"></script>
 
-@if (isset($scripts) && is_array($scripts))
-@foreach ($scripts as $it)
+@if (isset($config['script']) && is_array($config['script']))
+@foreach ($config['script'] as $it)
     {!! '<script src="'.$it.'"></script>' !!}
 @endforeach
 @endif

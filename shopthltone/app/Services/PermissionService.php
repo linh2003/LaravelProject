@@ -1,45 +1,47 @@
 <?php
 namespace App\Services;
+
 use App\Services\Interfaces\PermissionServiceInterface;
 use App\Repositories\Interfaces\PermissionRepositoryInterface as PermissionRepository;
-use App\Repositories\Interfaces\UserRoleRepositoryInterface as UserRoleRepository;
-use Illuminate\Http\Request;
+use App\Repositories\Interfaces\RoleRepositoryInterface as RoleRepository;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PermissionService implements PermissionServiceInterface
 {
     protected $permissionRepository;
-    protected $userRoleRepository;
-    public function __construct(PermissionRepository $permissionRepository, UserRoleRepository $userRoleRepository){
+    protected $roleRepository;
+    public function __construct(PermissionRepository $permissionRepository, RoleRepository $roleRepository){
         $this->permissionRepository = $permissionRepository;
-        $this->userRoleRepository = $userRoleRepository;
+        $this->roleRepository = $roleRepository;
     }
-
-    public function setPermission(Request $request){
+    public function rolePermission($request){
+        $permission = $request->input('permission');
+        /*
+        * permission array:
+        * [
+        * role_id => [permission_id]
+        * ]
+         */
         DB::beginTransaction();
         try {
-            $permissions = $request->input('permission');
-            foreach ($permissions as $key => $per) {
-                // dd($key);
-                $role = $this->userRoleRepository->findByID($key);
-                $role->permissions()->detach();
-                $role->permissions()->sync($per);
+            foreach ($permission as $k => $p) {
+                $role = $this->roleRepository->findById($k);
+                $this->permissionRepository->syncData($role, $p, 'permissions');
+                DB::commit();
             }
-            DB::commit();
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
-            echo $e->getMessage();die();
+            echo $e->getMessage(); die();
             return false;
         }
     }
-
-    public function update($id, Request $request){
+    
+    public function create($request){
         DB::beginTransaction();
         try {
             $payload = $request->except(['_token','send']);
-            $permission = $this->permissionRepository->update($id,$payload);
+            $this->permissionRepository->create($payload);
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -48,36 +50,16 @@ class PermissionService implements PermissionServiceInterface
             return false;
         }
     }
-
-    public function create(Request $request){
-        DB::beginTransaction();
-        try {
-            $payload = $request->except(['_token','send']);
-            // dd($payload);
-            $permission = $this->permissionRepository->create($payload);
-            DB::commit();
-            return true;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            echo $e->getMessage();die();
-            return false;
-        }
-    }
-    public function getPermissions(Request $request, $count=false,$select=['*']){
+    public function getData($request, $counter = false){
+        $select = $this->select();
         $condition = $request->except('search');
-        if (isset($condition['keyword'])) {
-            $condition['keyword'] = addslashes($condition['keyword']);
-        }
-        $perPage = isset($condition['perpage']) ? intval($condition['perpage']) : 0;
-        return $this->permissionRepository->getDataPagination($select,$condition,[],$perPage,['path'=>'admin/permission'],[],[],$count,['id','ASC']);
+        return $this->permissionRepository->getAll($select, $condition, $counter);
     }
     private function select(){
         return [
+            'id',
             'name',
-            'caninocal',
-            'image',
-            'user_id',
+            'canonical'
         ];
     }
-    
 }

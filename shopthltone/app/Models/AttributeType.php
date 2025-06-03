@@ -9,39 +9,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AttributeType extends Model
 {
-    use HasFactory, SoftDeletes, QueryScopes;
+    use HasFactory, QueryScopes, SoftDeletes;
 
     protected $fillable = [
-        'parentid',
-        'lft',
-        'rgt',
-        'level',
-        'image',
-        'icon',
-        'album',
         'publish',
         'follow',
         'order',
         'user_id',
     ];
-    protected $table = 'attribute_types';
-    public function languages()
-    {
-        return $this->belongsToMany(Language::class,'attribute_type_languages','attribute_type_id',relatedPivotKey: 'language_id')
-        ->withPivot(
+    public function languages(){
+        return $this->belongsToMany(Language::class, 'attribute_type_language', 'attribute_type_id', 'language_id')->withPivot(
             'name',
-            'canonical',
-            'meta_title',
-            'meta_keyword',
-            'meta_desc',
             'description',
             'content',
-        )->withTimestamps();
+            'meta_title',
+            'meta_description',
+            'meta_keyword',
+            'canonical',
+        );
     }
     public function attributes(){
-        return $this->belongsToMany(Attribute::class,'attribute_type_attribute','attribute_type_id','attribute_id');
+        return $this->belongsToMany(Attribute::class, 'attribute_type_attribute', 'attribute_type_id', 'attribute_id');
     }
-    public function attribute_type_languages(){
-        return $this->hasMany(AttributeTypeLanguage::class,'attribute_type_id','id');
+    public function attribute_type_language(){
+        return $this->hasMany(AttributeTypeLanguage::class, 'attribute_type_id', 'id');
+    }
+    public function language($locale = null){
+        $locale = $locale ?? app()->getLocale();
+        return $this->languages->firstWhere('canonical', $locale);
     }
 }

@@ -9,40 +9,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Attribute extends Model
 {
-    use HasFactory, SoftDeletes, QueryScopes;
-
+    use HasFactory, QueryScopes, SoftDeletes;
     protected $fillable = [
-        'attribute_type_id',
         'image',
-        'album',
-        'icon',
         'publish',
         'follow',
         'order',
         'user_id',
     ];
-    protected $table = 'attributes';
-    public function languages()
-    {
-        return $this->belongsToMany(Language::class,'attribute_languages','attribute_id',relatedPivotKey: 'language_id')
-        ->withPivot(
+    public function languages(){
+        return $this->belongsToMany(Language::class, 'attribute_language', 'attribute_id', 'language_id')->withPivot(
             'name',
-            'canonical',
-            'meta_title',
-            'meta_keyword',
-            'meta_desc',
             'description',
             'content',
-        )->withTimestamps();
+            'meta_title',
+            'meta_description',
+            'meta_keyword',
+            'canonical',
+        );
     }
-
     public function attribute_types(){
-        return $this->belongsToMany(AttributeType::class,'attribute_type_attribute','attribute_id','attribute_type_id');
+        return $this->belongsToMany(AttributeType::class, 'attribute_type_attribute', 'attribute_id', 'attribute_type_id');
     }
-    public function attribute_languages(){
-        return $this->hasMany(AttributeLanguage::class,'attribute_id','id');
-    }
-    public function product_variants(){
-        return $this->belongsToMany(ProductVariant::class,'product_variant_attribute', 'attribute_id', 'product_variant_id');
+    public function attribute_language(){
+        return $this->hasMany(AttributeLanguage::class, 'attribute_id', 'id');
     }
 }

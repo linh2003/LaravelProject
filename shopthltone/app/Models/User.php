@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\QueryScopes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, QueryScopes;
+    use HasApiTokens, HasFactory, Notifiable, QueryScopes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,12 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'phone',
         'email',
-        'image',
-        'birthday',
-        'address',
-        'publish',
         'password',
     ];
 
@@ -49,21 +43,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    protected $table = 'users';
-
-    // protected $with = ['roles.permissions'];
-
-
     public function roles(){
-        return $this->belongsToMany(Role::class,'user_role','user_id','role_id');
+        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
     }
-
     public function hasPermission($permissionCanonical){
-        return $this->roles->permissions->contains('canonical',$permissionCanonical);
+        return $this->roles->permission->contains('canonical', $permissionCanonical);
     }
-
-    // public function roles(){
-    //     return $this->belongsTo(Role::class,'role','id');
-    // }
 }

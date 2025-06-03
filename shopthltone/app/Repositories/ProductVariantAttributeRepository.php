@@ -7,9 +7,7 @@ use App\Repositories\BaseRepository;
 
 class ProductVariantAttributeRepository extends BaseRepository implements ProductVariantAttributeRepositoryInterface
 {
-    public function __construct(ProductVariantAttribute $productVariantAttribute){
-        $this->model = $productVariantAttribute;
+    public function __construct(ProductVariantAttribute $productVariantAttr){
+        $this->model = $productVariantAttr;
     }
-
-    
 }

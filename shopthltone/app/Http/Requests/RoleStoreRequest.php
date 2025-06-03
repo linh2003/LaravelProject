@@ -23,15 +23,14 @@ class RoleStoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'slug' => 'required|unique:roles',
+            'slug' => 'required|unique:roles'
         ];
     }
-    public function messages()
-    {
+    public function messages(){
         return [
-            'name.required' => 'The catalogue user field is required.',
-            'slug.required' => 'The machine name catalogue user field is required.',
-            'slug.unique'   => 'The machine name of catalogue user must be unique',
+            'name.required' => __('role.message.request.name'),
+            'slug.required' => __('role.message.request.slug.required'),
+            'slug.unique' => __('role.message.request.slug.unique'),
         ];
     }
 }

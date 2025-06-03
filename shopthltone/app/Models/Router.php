@@ -14,5 +14,4 @@ class Router extends Model
         'controller',
         'language_id',
     ];
-    protected $table = 'routers';
 }

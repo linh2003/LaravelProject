@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,15 +22,12 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-        Gate::define('modules',function($user,$permissionName){
-
-            if($user->publish == 2) return false;
-            $permissions = $user->roles;
-           
-            if($permissions->contains('canonical',$permissionName)){
-                return true;
+        Gate::define('modules', function($user, $permissionName){
+            
+            if ($user->status == 2) {
+                return false;
             }
-            return false;
+            return $user->roles->flatMap->permissions->contains('canonical', $permissionName);
         });
     }
 }

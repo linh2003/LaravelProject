@@ -10,6 +10,4 @@ class ProductVariantLanguageRepository extends BaseRepository implements Product
     public function __construct(ProductVariantLanguage $productVariantLanguage){
         $this->model = $productVariantLanguage;
     }
-
-    
 }

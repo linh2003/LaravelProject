@@ -1,11 +1,10 @@
 <?php
 namespace App\Services\Interfaces;
-use Illuminate\Http\Request;
 
-interface AttributeServiceInterface{
-    public function getAttributes(Request $request, $pagination=false);
-    public function create(Request $request);
-    public function update($id,Request $request);
-    public function destroy($id);
-    
+interface AttributeServiceInterface
+{
+    public function remove($id);
+    public function update($id, $request);
+    public function create($request);
+    public function getData($request, $counter = false, $join = []);
 }

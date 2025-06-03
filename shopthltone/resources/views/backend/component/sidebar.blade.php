@@ -16,7 +16,7 @@ $seg3 = request()->segment(3);
                         <li><a href="contacts.html">Contacts</a></li>
                         <li><a href="mailbox.html">Mailbox</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ route('auth.logout') }}">Logout</a></li>
+                        <li><a href="{{ route('logout') }}">Logout</a></li>
                     </ul>
                 </div>
                 <div class="logo-element">
@@ -33,33 +33,12 @@ $seg3 = request()->segment(3);
 					@if(isset($m['sub']))
 					<ul class="nav nav-second-level collapse {{$seg3}}">
 					@foreach($m['sub'] as $key => $sub)
-						<li class="{{($seg3==$sub['name'])?'active':''}}"><a href="{{route($sub['route'])}}">{{$sub['title']}}</a></li>
+						<li class="{{($sub['name']==$seg3)?'active':''}}"><a href="{{route($sub['route'])}}">{{$sub['title']}}</a></li>
 					@endforeach
 					</ul>
 					@endif
 				</li>
 			@endforeach
-            <!--<li>
-				<a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa arrow"></span></a>
-				<ul class="nav nav-second-level collapse">
-					<li><a href="table_basic.html">Static Tables</a></li>
-					<li><a href="table_data_tables.html">Data Tables</a></li>
-					<li><a href="table_foo_table.html">Foo Tables</a></li>
-					<li><a href="jq_grid.html">jqGrid</a></li>
-				</ul>
-			</li>
-			<li>
-				<a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">E-commerce</span><span class="fa arrow"></span></a>
-				<ul class="nav nav-second-level collapse">
-					<li><a href="ecommerce_products_grid.html">Products grid</a></li>
-					<li><a href="ecommerce_product_list.html">Products list</a></li>
-					<li><a href="ecommerce_product.html">Product edit</a></li>
-					<li><a href="ecommerce_product_detail.html">Product detail</a></li>
-					<li><a href="ecommerce-cart.html">Cart</a></li>
-					<li><a href="ecommerce-orders.html">Orders</a></li>
-					<li><a href="ecommerce_payments.html">Credit Card form</a></li>
-				</ul>
-			</li>-->
         </ul>
     </div>
 </nav>

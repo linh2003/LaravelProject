@@ -1,37 +1,49 @@
 <?php
 namespace App\Services;
+
 use App\Services\BaseService;
 use App\Services\Interfaces\AttributeTypeServiceInterface;
 use App\Repositories\Interfaces\AttributeTypeRepositoryInterface as AttributeTypeRepository;
 use App\Repositories\Interfaces\RouterRepositoryInterface as RouterRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AttributeTypeService extends BaseService implements AttributeTypeServiceInterface
 {
     protected $attributeTypeRepository;
-    protected $routerRepository;
     protected $controllerName;
-    protected $languageId;
     public function __construct(AttributeTypeRepository $attributeTypeRepository, RouterRepository $routerRepository){
+        parent::__construct($routerRepository);
         $this->attributeTypeRepository = $attributeTypeRepository;
-        $this->routerRepository = $routerRepository;
-        $this->controllerName = 'AttributeTypeController';
-        $this->languageId = $this->currentLanguage();
+        $this->controllerName = 'Product\AttributeTypeController';
     }
-    public function destroy($id){
+    public function remove($id){
+        dd($id);
         DB::beginTransaction();
         try {
-            $this->attributeTypeRepository->forceDelete($id);
-            // dd('123');
-            $condition = [
-                ['module_id', '=', $id],
-                ['controller', '=', 'App\Http\Controllers\Frontend\\'.$this->controllerName],
-            ];
-            $this->routerRepository->forceDeleteByCondition($condition);
+            $this->attributeTypeRepository->destroy($id);
+            // dd($flag);
+            // dd($attributeType);
+            // if ($flag) {
+            //     $condition = [
+            //         ['tb2.attribute_type_id', '=', $id],
+            //         ['tb2.language_id', '=', $this->languageCurent->id],
+            //         ['tb2.deleted_at', '=', null],
+            //     ];
+            //     $join = [
+            //         ['attribute_type_language as tb2', 'attribute_types.id', '=', 'tb2.attribute_type_id']
+            //     ];
+            //     $attributeTypeLang = $this->attributeTypeRepository->findByCondition(['*'], $condition, $join);
+            //     $attributeTypeLang->delete();
+            //     $conditionRouter = [
+            //         ['module_id', '=', $id],
+            //         ['controller', '=', $this->controllerPrefix.$this->controllerName],
+            //         ['language_id', '=', $this->languageCurent->id],
+            //     ];
+            //     $router = $this->routerRepository->findByCondition(['*'], $conditionRouter);
+            //     $router->delete();
+            // }
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -40,15 +52,16 @@ class AttributeTypeService extends BaseService implements AttributeTypeServiceIn
             return false;
         }
     }
-
-    public function update($id,Request $request){
+    public function update($id, $request){
+        // dd($request->input());
         DB::beginTransaction();
         try {
-            $attributeType = $this->attributeTypeRepository->findByID($id);
-            $flag = $this->uploadAttributeType($id,$request);
-            if ($flag) {
-                $this->updateLanguageForAttributeType($attributeType,$request);
-                $this->updateRouter($id,$request,$this->controllerName, $this->languageId);
+            $attributeType = $this->updateAttributeType($id, $request);
+            // dd($attributeType);
+            if ($attributeType->id > 0) {
+                $this->updateLanguageForAttributeType($request, $attributeType, $this->languageCurent->id);
+                $this->updateRouter($request, $id, $this->controllerName);
+                // dd(222);
             }
             DB::commit();
             return true;
@@ -58,14 +71,14 @@ class AttributeTypeService extends BaseService implements AttributeTypeServiceIn
             return false;
         }
     }
-
-    public function create(Request $request){
+    public function create($request){
         DB::beginTransaction();
         try {
             $attributeType = $this->createAttributeType($request);
+            
             if ($attributeType->id > 0) {
-                $this->updateLanguageForAttributeType($attributeType,$request);
-                $this->createRouter($attributeType->id,$request,$this->controllerName, $this->languageId);
+                $this->updateLanguageForAttributeType($request, $attributeType, $this->languageCurent->id);
+                $this->createRouter($request, $attributeType->id, $this->controllerName);
             }
             DB::commit();
             return true;
@@ -75,77 +88,93 @@ class AttributeTypeService extends BaseService implements AttributeTypeServiceIn
             return false;
         }
     }
-    public function getAttributeTypes(Request $request, $pagination=false){
-        $condition = $request->except('search');
-        if (isset($condition['keyword'])) {
-            $condition['keyword'] = addslashes($condition['keyword']);
+    public function changeStatusAll($request){
+        $ids = $request['modelId'];
+        $condition = [$request['field'] => $request['value']];
+        return $this->attributeTypeRepository->updateWhereIn('id', $ids, $condition);
+    }
+    public function changeStatus($request){
+        DB::beginTransaction();
+        try {
+            $id = $request['modelId'];
+            $field = $request['field'];
+            $value = ($request['value'] == 1) ? config('apps.general.unpublish') : config('apps.general.publish');
+            // dd($value);
+            $condition = [$field => $value];
+            $this->attributeTypeRepository->update('id', $id, $condition);
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();die();
+            return false;
         }
-        $perPage = isset($condition['perpage']) ? intval($condition['perpage']) : 20;
-        $condition['where'] = [
-            ['tb2.language_id','=',$this->currentLanguage()],
-        ];
-        $attributeTypes = $this->attributeTypeRepository->getDataPagination(
-            $this->selected(),
-            $condition,
+    }
+    public function getAttributeType($id = ''){
+        $languageId = $this->languageCurent->id;
+        return $this->attributeTypeRepository->getAttributeType($id, $languageId);
+    }
+    public function getData(mixed $request = '', $counter = false, $join = []){
+        $select = $this->select();
+        $condition = $request ? $request->except('search') : [];
+        $condition['where'] = [['tb2.language_id', '=', $this->languageCurent->id]];
+        // dd($condition);
+        $join = [
             [
-                ['attribute_type_languages as tb2','tb2.attribute_type_id','=','attribute_types.id'],
-            ],
-            $perPage,
-            ['path'=>'admin/product/attype/attype','groupBy'=>$this->selected()],
-            [],
-            [],
-            $pagination,
-            ['attribute_types.id','DESC']
-        );
-        return $attributeTypes;
+            'attribute_type_language as tb2',
+            'attribute_types.id',
+            '=',
+            'tb2.attribute_type_id'
+            ]
+        ];
+        return $this->attributeTypeRepository->getData($select, $condition, $counter, $join);
     }
-    private function createAttributeType($request)
-    {
-        $payload = $request->only($this->payload());
-        $payload['user_id'] = Auth::id();
-        $payload['album'] = $this->formatAlbum($payload);
-        $postCat = $this->attributeTypeRepository->create($payload);
-        return $postCat;
+    private function updateLanguageForAttributeType($request, $attributeType, $languageId){
+        $payload = $this->formatLanguageForAttributeType($request);
+        $attributeType->languages()->detach([$attributeType->id, $languageId]);
+        return $this->attributeTypeRepository->createPivot($attributeType, $payload, 'languages');
     }
-    private function uploadAttributeType($id,$request)
-    {
-        $payload = $request->only($this->payload());
-        $payload['album'] = $this->formatAlbum($payload);
-        return $this->attributeTypeRepository->update($id,$payload);
-    }
-    private function updateLanguageForAttributeType($model,$request)
-    {
-        $payloadLanguage = $request->only($this->payloadLanguage());
-        $payloadLanguage = $this->formatLanguagePayload($payloadLanguage,$model);
-        $model->languages()->detach([$payloadLanguage['language_id'],$model->id]);
-        return $this->attributeTypeRepository->createPivot($model,$payloadLanguage,'languages');
-    }
-    private function formatLanguagePayload($payload,$model)
-    {
+    private function formatLanguageForAttributeType($request){
+        $payload = $request->only($this->payloadLanguage());
         $payload['canonical'] = Str::slug($payload['canonical']);
-        $payload['language_id'] = $this->currentLanguage();
-        $payload['attribute_type_id'] = $model->id;
+        $payload['language_id'] = $this->languageCurent->id;
         return $payload;
     }
-    private function payloadLanguage()
-    {
-        return ['name','canonical','description','content','meta_title','meta_keyword','meta_desc'];
+    private function updateAttributeType($id, $request){
+        $payload = $request->only($this->payload());
+        $payload['user_id'] = Auth::id();
+        return $this->attributeTypeRepository->update($id, $payload);
     }
-    private function payload()
-    {
-        return ['parentid','publish','image','album'];
+    private function createAttributeType($request){
+        $payload = $request->only($this->payload());
+        $payload['user_id'] = Auth::id();
+        return $this->attributeTypeRepository->create($payload);
     }
-    private function selected()
-    {
+    private function payloadLanguage(){
         return [
-            'attribute_types.id',
-            'attribute_types.publish',
-            'attribute_types.order',
-            'attribute_types.image',
-            'attribute_types.album',
-            'tb2.name',
-            'tb2.canonical',
+            'name',
+            'canonical',
+            'description',
+            'content',
+            'meta_title',
+            'meta_keyword',
+            'meta_description',
         ];
     }
-    
+    private function payload(){
+        return [
+            'publish',
+            'follow',
+            'user_id',
+        ];
+    }
+    private function select(){
+        return [
+            'id',
+            'publish',
+            'follow',
+            'order',
+            'tb2.name'
+        ];
+    }
 }

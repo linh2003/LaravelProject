@@ -22,7 +22,7 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
 					@php
-					$action = (isset($method) && $method=='create') ? route('admin.language.store') : route('admin.language.update',$language->id)
+					$action = (isset($method) && $method=='create') ? route('language.store') : route('language.update',$language->id)
 					@endphp
                     <form method="POST" action="{{$action}}">
                         @csrf
@@ -45,14 +45,9 @@
                                 <div class="form-group">
                                     <label class="control-label">Author</label>
                                     <select name="user_id" class="form-control setupSelect2 roles-option">
-										<option value="">-- Select author --</option>
-										@foreach($users as $k => $u)
-											@if($method=='create')
-											<option value="{{$u->id}}" {{$u->id==$uidLogged?'selected':''}}>{{$u->name}}</option>
-											@else
-											<option value="{{$u->id}}" {{$language->user_id==$u->id?'selected':''}}>{{$u->name}}</option>
-											@endif
-										@endforeach
+									@if($user)
+										<option value="{{$user->id}}">{{$user->name}}</option>
+									@endif
 									</select>
                                 </div>
                             </div>

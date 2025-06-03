@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class AttributeLanguage extends Model
 {
     use HasFactory;
-    protected $table = 'attribute_languages';
-    public function attributes()
-    {
-        return $this->belongsTo(Attribute::class,'attribute_id','id');
-    }
+    protected $table = 'attribute_language';
+
 }

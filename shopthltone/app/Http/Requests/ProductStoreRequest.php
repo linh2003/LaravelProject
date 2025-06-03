@@ -23,16 +23,16 @@ class ProductStoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'product_catalogue_id' => 'gt:0',
             'canonical' => 'required|unique:routers',
-            'catalogue' => 'required'
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
             'name.required' => __('product.message.request.name'),
+            'product_catalogue_id.gt' => __('product.message.request.catalogue'),
             'canonical.required' => __('product.message.request.canonical.required'),
             'canonical.unique' => __('product.message.request.canonical.unique'),
-            'catalogue.required' => __('product.message.request.catalogue'),
         ];
     }
 }

@@ -26,11 +26,11 @@ class AttributeTypeUpdateRequest extends FormRequest
             'canonical' => 'required|unique:routers,canonical,'.$this->id.',module_id',
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
-            'name.required' => 'The post catalogue name field is required.',
-            'canonical.required' => 'The post catalogue canonical field is required.',
-            'canonical.unique' => 'Đường dẫn đã tồn tại. Vui lòng nhập giá trị khác',
+            'name.required' => __('attribute_type.message.request.name'),
+            'canonical.required' => __('attribute_type.message.request.canonical.required'),
+            'canonical.unique' => __('attribute_type.message.request.canonical.unique'),
         ];
     }
 }

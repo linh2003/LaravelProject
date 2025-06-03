@@ -1,18 +1,27 @@
 <?php
 return [
     'publish' => [
-        'title' => 'Xuất bản',
-        'content' => [
-            1 => 'Xuất bản',
-            2 => 'Không xuất bản',
-        ]
+        0 => 'Chọn',
+        1 => 'Đang hoạt động',
+        2 => 'Đã tạm dừng',
+    ],
+    'promotion' => [
+        1 => 'Kích hoạt',
+        2 => 'Chưa áp dụng',
     ],
     'follow' => [
-        'title' => 'Theo dõi',
-        'content' => [
-            1 => 'Theo dõi',
-            2 => 'Không theo dõi',
-        ]
+        0 => 'Chọn',
+        1 => 'Theo dõi',
+        2 => 'Bỏ theo dõi',
     ],
-    // 'suffix' => '.html'
+    'button' => [
+        'create' => 'Thêm mới',
+        'edit' => 'Sửa',
+        'delete' => 'Xóa',
+        'delete_all' => 'Xóa các mục đã chọn',
+        'save' => 'Lưu',
+        'cancel' => 'Hủy bỏ',
+        'close' => 'Đóng',
+        'apply' => 'Đồng ý',
+    ]
 ];

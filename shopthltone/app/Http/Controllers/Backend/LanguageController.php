@@ -2,91 +2,73 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Backend\BackendController;
+use App\Http\Requests\LanguageStoreRequest;
 use Illuminate\Http\Request;
-use App\Http\Requests\LanguageRequest;
 use App\Services\Interfaces\LanguageServiceInterface as LanguageService;
 use App\Repositories\Interfaces\LanguageRepositoryInterface as LanguageRepository;
-use App\Repositories\Interfaces\UserRepositoryInterface as UserRepository;
 use Illuminate\Support\Facades\Auth;
 
-class LanguageController extends Controller
+class LanguageController extends BackendController
 {
     protected $languageService;
     protected $languageRepository;
-    protected $userRepository;
-    protected $asset;
-    public function __construct(LanguageService $languageService, LanguageRepository $languageRepository, UserRepository $userRepository){
+
+    public function __construct(LanguageService $languageService, LanguageRepository $languageRepository){
+        parent::__construct();
         $this->languageService = $languageService;
         $this->languageRepository = $languageRepository;
-        $this->userRepository = $userRepository;
-        $this->asset = asset('backend');
     }
-
     public function switchLanguage($id){
-        $lang = $this->languageRepository->findByID($id,['canonical']);
+        $lang = $this->languageRepository->findById($id, ['canonical']);
         if($this->languageService->switchLanguage($id)){
-            session(['app_locale'=>$lang->canonical]);
+            session(['app_locale' => $lang->canonical]);
             \App::setLocale($lang->canonical);
-            return back();
         }
+        return back();
     }
-    public function store(LanguageRequest $languageRequest){
-        if ($this->languageService->create($languageRequest)) {
-            return redirect()->route('admin.language')->with('success','Thêm mới bản ghi thành công');
+    public function store(LanguageStoreRequest $request){
+        if ($this->languageService->create($request)) {
+            return redirect()->route('admin.language')->with('success', 'Thêm mới bản ghi thành công!');
         }
-        return redirect()->route('admin.language')->with('error','Thêm mới bản ghi thất bại');
+        return redirect()->route('admin.language')->with('error', 'Thêm mới bản ghi thất bại!');
     }
     public function create(){
-        $config = $this->config();
-        // $config['heading'] = config('apps.language');
-        $config['method'] = 'create';
-        $users = $this->userRepository->getAll();
-        $uidLogged = Auth::id();
         $template = 'backend.language.store';
+        $method = 'create';
+        $user = Auth::user();
+        $config = $this->config();
         return view(
-            'backend.layout',
-            [
+            'backend.layout', 
+        [
                 'template'  => $template,
-                'css'       => $config['css'],
-                'scripts'   => $config['js'],
-                // 'heading'   => $config['heading'],
-                'method'    => $config['method'],
-                'users'     => $users,
-                'uidLogged' => $uidLogged,
+                'method'    => $method,
+                'user'      => $user,
+                'config'    => $config,
             ]
         );
     }
-    public function index(Request $request)
-    {
-
-        // $user = $this->userRepository->findById(1, ['*'], ['roles']);
-
-        // echo 123;die();
-        $this->authorize('modules','admin.user.create');
-        $languages = $this->languageService->getLanguages($request);
-        $counter = $this->languageService->getLanguages($request,false);
+    public function index(Request $request){
         $template = 'backend.language.index';
+        $data = $this->languageService->getData($request);
+        $counter = $this->languageService->getData($request, true);
         return view(
             'backend.layout',
             [
                 'template' => $template,
+                'data' => $data,
                 'counter' => $counter,
-                'data' => $languages,
             ]
         );
     }
     private function config(){
         return [
             'css' => [
-                $this->asset.'/css/plugins/jasny/jasny-bootstrap.min.css',
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
+
             ],
-            'js' => [
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
+            'script' => [
                 $this->asset.'/plugins/ckfinder_2/ckfinder.js',
-                $this->asset.'/js/customSelect2.js',
-                $this->asset.'/js/finder.js'
+                $this->asset.'/js/finder.js',
             ]
         ];
     }

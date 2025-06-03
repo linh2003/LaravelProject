@@ -1,7 +1,7 @@
-<form action="{{ route('admin.product') }}" method="get">
+<form action="{{ route('product.attributetype') }}" method="get">
 	<div class="d-flex justify-content-end">
 		<div class="search-info">
-			<input type="text" name="post_keyword" placeholder="Search..." class=" form-control" value="{{ request('keyword') ?? old('post_keyword') }}"> 
+			<input type="text" name="keyword" placeholder="{{$heading['filter']['button']['search']}}..." class=" form-control" value="{{ request('keyword') ?? old('keyword') }}"> 
 		</div>
 		<div class="catalogue-filter ml-3">
 			
@@ -9,8 +9,12 @@
 		<div class="status ml-3 {{request('publish')}} middle {{old('publish')}}">
 		@php
 			$publish = request('publish') ?? old('publish');
-			$arrPublish = [1=>'Publish',2=>'Unpulish'];
 		@endphp
+			<select name="publish" class="form-control {{$publish}}">
+				@foreach($general['publish'] as $key => $val)
+					<option value="{{$key}}" {{$publish==$key?'selected':''}}>{{$val}}</option>
+				@endforeach
+			</select>
 			
 		</div>
 		<div class="perpage ml-3">
@@ -18,14 +22,16 @@
 			$perpage = request('perpage') ?? old('perpage')
 		@endphp
 			<select class="form-control" name="perpage">
-				@for($i=20;$i<200;$i+=20)
-				<option value="{{$i}}" {{($perpage==$i)?'selected':''}}>{{$i}}</option>
-				@endfor
-				<option value="all">All</option>
+				@php $selected = $perpage @endphp
+				@foreach($config['config']['paginate'] as $val)
+					@php if($perpage == $val){$selected = $val;} @endphp
+				<option value="{{$val}}" {{($perpage==$val)?'selected':''}}>{{$val}}</option>
+				@endforeach
+				<option value="all" {{($selected=='all')?'selected':''}}>{{$heading['filter']['button']['perpage']}}</option>
 			</select>
 		</div>
 		<div class="action ml-3">
-			<button type="submit" name="search" class="btn btn-primary"> Apply </button> 
+			<button type="submit" name="search" class="btn btn-primary"> {{$heading['filter']['button']['search']}} </button> 
 		</div>
 	</div>
 	

@@ -26,11 +26,11 @@ class AttributeTypeStoreRequest extends FormRequest
             'canonical' => 'required|unique:routers',
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
-            'name.required' => 'Tiêu đề nhóm thuộc tính không được để trống.',
-            'canonical.required' => 'Đường dẫn SEO không được trống.',
-            'canonical.unique' => 'Đường dẫn SEO đã tồn tại. Vui lòng nhập giá trị khác',
+            'name.required' => __('attribute_type.message.request.name'),
+            'canonical.required' => __('attribute_type.message.request.canonical.required'),
+            'canonical.unique' => __('attribute_type.message.request.canonical.unique'),
         ];
     }
 }

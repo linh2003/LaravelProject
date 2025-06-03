@@ -1,8 +1,8 @@
 <?php
 namespace App\Services\Interfaces;
-use Illuminate\Http\Request;
-
-interface ProductServiceInterface{
-    public function create(Request $request);
-    
+interface ProductServiceInterface
+{
+    public function getProduct($id);
+    public function getData($request, $counter, $catId = 0);
+    public function create($request);
 }

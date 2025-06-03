@@ -7,9 +7,7 @@ use App\Repositories\BaseRepository;
 
 class LanguageRepository extends BaseRepository implements LanguageRepositoryInterface
 {
-    public function __construct(Language $languages){
-        $this->model = $languages;
+    public function __construct(Language $language){
+        $this->model = $language;
     }
-
-    
 }

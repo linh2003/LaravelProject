@@ -1,55 +1,36 @@
 <?php
 namespace App\Services;
+
 use App\Services\BaseService;
 use App\Services\Interfaces\AttributeServiceInterface;
 use App\Repositories\Interfaces\AttributeRepositoryInterface as AttributeRepository;
 use App\Repositories\Interfaces\RouterRepositoryInterface as RouterRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AttributeService extends BaseService implements AttributeServiceInterface
 {
     protected $attributeRepository;
-    protected $routerRepository;
     protected $controllerName;
-    protected $languageId;
     public function __construct(AttributeRepository $attributeRepository, RouterRepository $routerRepository){
+        parent::__construct($routerRepository);
         $this->attributeRepository = $attributeRepository;
-        $this->routerRepository = $routerRepository;
-        $this->controllerName = 'AttributeController';
-        $this->languageId = $this->currentLanguage();
+        $this->controllerName = 'Product\AttributeController';
     }
-    public function destroy($id){
+    public function deleteAll($ids){
+        // dd($ids);
         DB::beginTransaction();
         try {
-            $this->attributeRepository->forceDelete($id);
-            // dd('123');
+            $select = ['id'];
             $condition = [
-                ['module_id', '=', $id],
-                ['controller', '=', 'App\Http\Controllers\Frontend\\'.$this->controllerName],
+                'wherein' => ['id' => $ids]
             ];
-            $this->routerRepository->forceDeleteByCondition($condition);
-            DB::commit();
-            return true;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            echo $e->getMessage();die();
-            return false;
-        }
-    }
-
-    public function update($id,Request $request){
-        DB::beginTransaction();
-        try {
-            $attribute = $this->attributeRepository->findByID($id);
-            $flag = $this->uploadAttribute($id,$request);
+            // dd($condition);
+            $flag = $this->attributeRepository->destroyCondition($select, $condition, []);
+            // dd($flag);
             if ($flag) {
-                $this->updateLanguageForAttribute($attribute,$request);
-                $this->updateCatalogueForAttribute($attribute,$request);
-                $this->updateRouter($id,$request,$this->controllerName, $this->languageId);
+                $this->deleteMultipleRouter($ids, $this->controllerName);
             }
             DB::commit();
             return true;
@@ -59,15 +40,51 @@ class AttributeService extends BaseService implements AttributeServiceInterface
             return false;
         }
     }
-
-    public function create(Request $request){
+    public function remove($id){
+        // dd($id);
+        DB::beginTransaction();
+        try {
+            $flag = $this->attributeRepository->destroy($id);
+            if ($flag) {
+                $this->deleteRouter($id, $this->controllerName);
+            }
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();die();
+            return false;
+        }
+    }
+    public function update($id, $request){
+        // dd($request->input());
+        DB::beginTransaction();
+        try {
+            $attribute = $this->updateAttribute($id, $request);
+            // dd($attribute);
+            if ($attribute->id > 0) {
+                $this->updateLanguageForAttribute($request, $attribute, $this->languageCurent->id);
+                $this->updateAttributeTypeForAttribute($request, $attribute);
+                $this->updateRouter($request, $id, $this->controllerName);
+                // dd(222);
+            }
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();die();
+            return false;
+        }
+    }
+    public function create($request){
         DB::beginTransaction();
         try {
             $attribute = $this->createAttribute($request);
+            // dd($attribute);
             if ($attribute->id > 0) {
-                $this->updateLanguageForAttribute($attribute,$request);
-                $this->updateCatalogueForAttribute($attribute,$request);
-                $this->createRouter($attribute->id,$request,$this->controllerName, $this->languageId);
+                $this->updateLanguageForAttribute($request, $attribute, $this->languageCurent->id);
+                $this->updateAttributeTypeForAttribute($request, $attribute);
+                $this->createRouter($request, $attribute->id, $this->controllerName);
             }
             DB::commit();
             return true;
@@ -77,87 +94,100 @@ class AttributeService extends BaseService implements AttributeServiceInterface
             return false;
         }
     }
-    public function getAttributes(Request $request, $pagination=false){
-        $condition = $request->except('search');
-        if (isset($condition['keyword'])) {
-            $condition['keyword'] = addslashes($condition['keyword']);
+    public function changeStatusAll($request){
+        $ids = $request['modelId'];
+        $condition = [$request['field'] => $request['value']];
+        return $this->attributeRepository->updateWhereIn('id', $ids, $condition);
+    }
+    public function changeStatus($request){
+        DB::beginTransaction();
+        try {
+            $id = $request['modelId'];
+            $field = $request['field'];
+            $value = ($request['value'] == 1) ? config('apps.general.unpublish') : config('apps.general.publish');
+            // dd($value);
+            $condition = [$field => $value];
+            $this->attributeRepository->update($id, $condition);
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();die();
+            return false;
         }
-        $perPage = isset($condition['perpage']) ? intval($condition['perpage']) : 20;
-        $condition['where'] = [
-            ['tb2.language_id','=',$this->currentLanguage()],
-        ];
-        $attributes = $this->attributeRepository->getDataPagination(
-            $this->selected(),
-            $condition,
+    }
+    public function updateAttributeTypeForAttribute($request, $model){
+        $payload = $request->only('attributeType');
+        return $this->attributeRepository->syncData($model, $payload['attributeType'], 'attribute_types');
+    }
+    public function getAttribute($id = ''){
+        $join = [['attribute_language as tb2', 'attributes.id', '=', 'tb2.attribute_id']];
+        $languageId = $this->languageCurent->id;
+        return $this->attributeRepository->getAttribute($id, $languageId);
+    }
+    public function getData($request, $counter = false, $join = []){
+        $select = $this->select();
+        $condition = $request->except('search');
+        $condition['where'] = [['tb2.language_id', '=', $this->languageCurent->id]];
+        // dd($condition);
+        $join = [
             [
-                ['attribute_languages as tb2','tb2.attribute_id','=','attributes.id'],
-            ],
-            $perPage,
-            ['path'=>'admin/product/attribute/attribute','groupBy'=>$this->selected()],
-            [],
-            [],
-            $pagination,
-            ['attributes.id','DESC']
-        );
-        return $attributes;
+            'attribute_language as tb2',
+            'attributes.id',
+            '=',
+            'tb2.attribute_id'
+            ]
+        ];
+        return $this->attributeRepository->getData($select, $condition, $counter, $join);
     }
-    private function createAttribute($request)
-    {
-        $payload = $request->only($this->payload());
-        $payload['user_id'] = Auth::id();
-        $payload['album'] = $this->formatAlbum($payload);
-        $postCat = $this->attributeRepository->create($payload);
-        return $postCat;
+    private function updateLanguageForAttribute($request, $attribute, $languageId){
+        $payload = $this->formatLanguageForAttribute($request);
+        $attribute->languages()->detach([$attribute->id, $languageId]);
+        return $this->attributeRepository->createPivot($attribute, $payload, 'languages');
     }
-    private function uploadAttribute($id,$request)
-    {
-        $payload = $request->only($this->payload());
-        $payload['album'] = $this->formatAlbum($payload);
-        return $this->attributeRepository->update($id,$payload);
-    }
-    private function updateLanguageForAttribute($model,$request)
-    {
-        $payloadLanguage = $request->only($this->payloadLanguage());
-        $payloadLanguage = $this->formatLanguagePayload($payloadLanguage,$model);
-        $model->languages()->detach([$payloadLanguage['language_id'],$model->id]);
-        return $this->attributeRepository->createPivot($model,$payloadLanguage,'languages');
-    }
-    private function formatLanguagePayload($payload,$model)
-    {
+    private function formatLanguageForAttribute($request){
+        $payload = $request->only($this->payloadLanguage());
         $payload['canonical'] = Str::slug($payload['canonical']);
-        $payload['language_id'] = $this->currentLanguage();
-        $payload['attribute_id'] = $model->id;
+        $payload['language_id'] = $this->languageCurent->id;
         return $payload;
     }
-    private function updateCatalogueForAttribute($attribute,$request){
-        $attribute->attribute_types()->sync($this->attributeTypes($request));
+    private function updateAttribute($id, $request){
+        $payload = $request->only($this->payload());
+        $payload['user_id'] = Auth::id();
+        return $this->attributeRepository->update($id, $payload);
     }
-    private function attributeTypes($request){
-        $arg = $request->input('attributeType');
-        if (!$arg) {
-            $arg = [];
-        }
-        return $arg;
+    private function createAttribute($request){
+        $payload = $request->only($this->payload());
+        $payload['user_id'] = Auth::id();
+        return $this->attributeRepository->create($payload);
     }
-    private function payloadLanguage()
-    {
-        return ['name','canonical','description','content','meta_title','meta_keyword','meta_desc'];
-    }
-    private function payload()
-    {
-        return ['attribute_type_id','publish','image','album'];
-    }
-    private function selected()
-    {
+    private function payloadLanguage(){
         return [
-            'attributes.id',
-            'attributes.publish',
-            'attributes.order',
-            'attributes.image',
-            'attributes.album',
-            'tb2.name',
-            'tb2.canonical',
+            'name',
+            'canonical',
+            'description',
+            'content',
+            'meta_title',
+            'meta_keyword',
+            'meta_description',
         ];
     }
-    
+    private function payload(){
+        return [
+            'image',
+            'publish',
+            'follow',
+            'user_id',
+        ];
+    }
+    private function select(){
+        return [
+            'id',
+            'image',
+            'publish',
+            'follow',
+            'order',
+            'tb2.name'
+        ];
+    }
 }

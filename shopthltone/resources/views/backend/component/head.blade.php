@@ -11,8 +11,8 @@
 <link href="{{asset('backend/css/animate.css')}}" rel="stylesheet">
 <link href="{{asset('backend/css/style.css')}}" rel="stylesheet">
 
-@if (isset($css) && is_array($css))
-@foreach ($css as $it)
+@if (isset($config['css']) && is_array($config['css']))
+@foreach ($config['css'] as $it)
     {!! '<link href="'.$it.'" rel="stylesheet">' !!}
 @endforeach
 @endif

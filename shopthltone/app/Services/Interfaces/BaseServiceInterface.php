@@ -1,12 +1,10 @@
 <?php
 namespace App\Services\Interfaces;
-use Illuminate\Http\Request;
 
-interface BaseServiceInterface{
-    public function createRouter($moduleId, $request, $controllerName, $languageId);
-    public function updateRouter($moduleId, $request, $controllerName, $languageId);
-    public function formatRouter($moduleId,$request,$controllerName, $languageId);
-    public function formatAlbum($payload);
-    public function formatJson($request, $inputName);
-    public function currentLanguage();
+interface BaseServiceInterface
+{
+    public function deleteMultipleRouter($moduleIds, $controllerName);
+    public function deleteRouter($moduleId, $controllerName);
+    public function updateRouter($request, $moduleId, $controllerName);
+    public function createRouter($request, $moduleId, $controllerName);
 }

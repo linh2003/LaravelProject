@@ -1,8 +1,7 @@
 <div id="tab-3" class="tab-pane">
 	@php
-		$albums = (isset($album) && count($album) > 0) ? $album : old('album');
+		$albums = old('album', (isset($album) && count($album) > 0) ? $album : '');
 	@endphp
-	@if(!isset($albums) || (isset($albums) && empty($albums)))
 	<div class="click-to-upload">
 		<div class="icon">
 			<a href="" class="upload-picture">
@@ -11,15 +10,15 @@
 		</div>
 		<div class="small-text">Drop file here or click to upload</div>
 	</div>
-	@endif
+
 	<div class="upload-list @php if(!isset($albums) || (isset($albums) && empty($albums))){echo 'hide';} @endphp">
 		<ul id="sortable" class="sortui clearfix data-album ui-sortable">
-		@if(isset($albums))
+		@if(isset($albums) && is_array($albums) && count($albums))
 			@foreach($albums as $k => $it)
 			<li class="ui-state-default">
 				<div class="thumb">
 					<span class="span image img-scaledown">
-						<img src="{{$it}}" alt="" />
+						<img src="{{asset($it)}}" alt="" />
 						<input type="hidden" name="album[]" value="{{$it}}">
 					</span>
 					<button class="delete-image"><i class="fa fa-trash"></i></button>

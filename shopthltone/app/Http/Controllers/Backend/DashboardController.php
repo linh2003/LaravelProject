@@ -7,8 +7,13 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __construct(){
-
+    public function index(){
+        $template = 'backend.component.dashboard';
+        return view(
+            'backend.layout', 
+        [
+                'template' => $template
+            ]
+        );
     }
-    
 }

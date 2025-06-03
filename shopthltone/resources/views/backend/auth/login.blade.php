@@ -10,11 +10,12 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('backend/auth/css/buttons.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('backend/auth/css/dashicons.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('backend/auth/css/l10n.min.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{asset('backend/auth/css/custom.css')}}">
 </head>
 <body class="login js login-action-login wp-core-ui  locale-en-us">
 	<div id="login">
-		<h1><a href="https://wordpress.org/">Powered by WordPress</a></h1>
-		<form name="loginform" id="loginform" action="{{ route('auth.login')}}" method="POST">
+		<h1><img src="{{asset('backend/images/logo.png')}}" alt="" /></h1>
+		<form name="loginform" id="loginform" action="{{ route('admin.auth')}}" method="POST">
 			@csrf
 			<p>
 				<label for="user_login">Username or Email Address</label>

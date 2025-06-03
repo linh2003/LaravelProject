@@ -26,11 +26,11 @@ class PermissionStoreRequest extends FormRequest
             'canonical' => 'required|unique:permissions',
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
-            'name.required' => 'Bạn chưa nhập tên quyền sử dụng.',
-            'canonical.required' => 'Bạn chưa nhập machine name quyền sử dụng.',
-            'canonical.unique' => 'Machine name quyền sử dụng đã tồn tại. Vui lòng nhập dữ liệu khác!',
+            'name.required' => __('permission.message.request.name'),
+            'canonical.required' => __('permission.message.request.canonical.required'),
+            'canonical.unique' => __('permission.message.request.canonical.unique'),
         ];
     }
 }

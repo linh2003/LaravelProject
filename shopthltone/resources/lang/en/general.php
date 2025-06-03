@@ -1,18 +1,27 @@
 <?php
 return [
     'publish' => [
-        'title' => 'Publish',
-        'content' => [
-            1 => 'Publish',
-            2 => 'UnPublish',
-        ]
+        0 => 'Select',
+        1 => 'Publish',
+        2 => 'Unpublish',
+    ],
+    'promotion' => [
+        1 => 'Activate',
+        2 => 'Cancel',
     ],
     'follow' => [
-        'title' => 'Follow',
-        'content' => [
-            1 => 'Follow',
-            2 => 'UnFollow',
-        ]
+        0 => 'Select',
+        1 => 'Follow',
+        2 => 'Unfollow',
     ],
-    // 'suffix' => '.html'
+    'button' => [
+        'create' => 'Add new',
+        'edit' => 'Edit',
+        'delete' => 'Delete',
+        'delete_all' => 'Delete items selected',
+        'save' => 'Save',
+        'cancel' => 'Cancel',
+        'close' => 'Close',
+        'apply' => 'Apply',
+    ]
 ];

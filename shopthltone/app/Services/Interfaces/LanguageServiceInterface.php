@@ -1,8 +1,9 @@
 <?php
 namespace App\Services\Interfaces;
-use Illuminate\Http\Request;
 
-interface LanguageServiceInterface{
-    public function create(Request $request);
+interface LanguageServiceInterface
+{
     public function switchLanguage($id);
+    public function create($request);
+    public function getData($request, $counter = false);
 }

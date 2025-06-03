@@ -1,4 +1,4 @@
-
+@include('backend.component.breadcrumb',['breadcrumb_before'=>$heading['index']['title'],'breadcrumb_after'=>$heading['index']['tableHeading']])
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-12 mt20">
@@ -6,14 +6,14 @@
                 <div class="ibox-title">
                     <h5></h5>
                     <div class="ibox-tools">
-                        <a class="btn btn-primary" href="{{ route('product.attype.create') }}"><i class="fa fa-plus"></i>&nbsp;Thêm mới</a>
+                        <a class="btn btn-primary" href="{{ route('product.attributetype.create') }}"><i class="fa fa-plus"></i>&nbsp;{{$general['button']['create']}}</a>
 						<a class="dropdown-toggle increase-icon" data-toggle="dropdown" href="#"><i class="fa fa-cog" aria-hidden="true"></i></a>
 						<ul class="dropdown-menu dropdown-user">
 							<li>
-								<a href="javascript:void(0)" class="changStatusAll" data-model="Product" data-field="publish" data-value="1">Publish all</a>
+								<a href="javascript:void(0)" class="changStatusAll" data-model="AttributeType" data-field="publish" data-value="1">{{$heading['index']['button']['publish']}}</a>
 							</li>
 							<li>
-								<a href="javascript:void(0)" class="changStatusAll" data-model="Product" data-field="publish" data-value="2">Unpublish all</a>
+								<a href="javascript:void(0)" class="changStatusAll" data-model="AttributeType" data-field="publish" data-value="2">{{$heading['index']['button']['unpublish']}}</a>
 							</li>
 						</ul>
                     </div>

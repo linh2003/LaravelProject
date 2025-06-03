@@ -17,9 +17,8 @@ class AuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::id() == null) {
-            return redirect()->route('auth.admin')->with('error','Bạn không có quyền truy cập');
+            return redirect()->route('admin.login')->with('error', 'Bạn không có quyền truy cập');
         }
-        
         return $next($request);
     }
 }

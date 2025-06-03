@@ -1,28 +1,26 @@
 <?php
 namespace App\Services;
+
 use App\Services\Interfaces\LanguageServiceInterface;
 use App\Repositories\Interfaces\LanguageRepositoryInterface as LanguageRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class LanguageService implements LanguageServiceInterface
 {
     protected $languageRepository;
-    protected $userRepository;
     public function __construct(LanguageRepository $languageRepository){
         $this->languageRepository = $languageRepository;
     }
-
     public function switchLanguage($id){
+        $modelId = intval($id);
         DB::beginTransaction();
         try {
-            $condition = [['id','=',$id]];
+            $conditionReset = [['id', '!=', $modelId]];
+            $value = ['active' => 0];
+            $this->languageRepository->updateByCondition( $conditionReset, $value);
+            $condition = [['id', '=', $modelId]];
             $payload = ['active' => 1];
-            $this->languageRepository->updateByWhere($condition,$payload);
-            $condition = [['id','!=',$id]];
-            $payload = ['active' => 0];
-            $this->languageRepository->updateByWhere($condition,$payload);
+            $this->languageRepository->updateByCondition($condition, $payload);
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -31,13 +29,11 @@ class LanguageService implements LanguageServiceInterface
             return false;
         }
     }
-
-    public function create(Request $request){
+    public function create($request){
         DB::beginTransaction();
         try {
             $payload = $request->except(['_token','send']);
-            // dd($payload);
-            $language = $this->languageRepository->create($payload);
+            $this->languageRepository->create($payload);
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -46,21 +42,17 @@ class LanguageService implements LanguageServiceInterface
             return false;
         }
     }
-    public function getLanguages(Request $request, $pagination=false,$select=['*']){
-        $condition = $request->except('search');
-        if (isset($condition['keyword'])) {
-            $condition['keyword'] = addslashes($condition['keyword']);
-        }
-        $perPage = isset($condition['perpage']) ? intval($condition['perpage']) : 0;
-        return $this->languageRepository->getDataPagination($select,$condition,[],$perPage,['path'=>'admin/language'],[],[],$pagination);
+    public function getData($request, $counter = false){
+        $select = $this->select();
+        return $this->languageRepository->getData($select, [], $counter);
     }
     private function select(){
         return [
+            'id',
             'name',
-            'caninocal',
+            'canonical',
             'image',
-            'user_id',
+            'active'
         ];
     }
-    
 }

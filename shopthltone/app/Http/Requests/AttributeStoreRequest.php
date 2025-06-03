@@ -26,7 +26,7 @@ class AttributeStoreRequest extends FormRequest
             'canonical' => 'required|unique:routers',
         ];
     }
-    public function messages() : array {
+    public function messages(){
         return [
             'name.required' => __('attribute.message.request.name'),
             'canonical.required' => __('attribute.message.request.canonical.required'),
