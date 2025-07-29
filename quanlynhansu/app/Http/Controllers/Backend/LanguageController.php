@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LanguageStoreRequest;
+use App\Http\Requests\Language\LanguageStoreRequest;
 use Illuminate\Http\Request;
 use App\Services\Interfaces\LanguageServiceInterface as LanguageService;
 use App\Repositories\Interfaces\LanguageRepositoryInterface as LanguageRepository;
@@ -76,15 +76,13 @@ class LanguageController extends Controller
     private function config(){
         return [
             'css' => [
-                $this->asset.'/css/libraries/switchery.min.css'
+                $this->asset.'/css/plugins/switchery/switchery.min.css'
             ],
             'script' => [
-                $this->asset.'/js/libraries/switchery.min.js',
-                $this->asset.'/js/libraries/swithces.js',
-                $this->asset.'/js/customSwitchery.js',
-                $this->asset.'/js/libraries/jquery.slimscroll.js',
-                $this->asset.'/js/libraries/waves.min.js',
-                $this->asset.'/js/libraries/popper.min.js',
+                $this->asset.'/js/plugins/switchery/switchery.min.js',
+                $this->asset.'/js/setupSwitchery.js',
+                $this->asset.'/js/checkboxes.js',
+                $this->asset.'/js/switchStatus.js'
             ]
         ];
     }

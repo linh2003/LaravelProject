@@ -2,9 +2,9 @@
 namespace App\Repositories;
 
 use App\Repositories\Interfaces\BaseRepositoryInterface;
+use GuzzleHttp\Psr7\Query;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use App\Enums\Constant;
+use Illuminate\Support\Facades\URL;
 
 class BaseRepository implements BaseRepositoryInterface
 {
@@ -46,6 +46,7 @@ class BaseRepository implements BaseRepositoryInterface
                 }
             }
         });
+        return $query->get();
     }
     public function findById($id, $select=['*'], $relation = []){
         return $this->model->select($select)->with($relation)->findOrFail($id);
@@ -65,13 +66,12 @@ class BaseRepository implements BaseRepositoryInterface
         $query = $this->model->create($payload);
         return $query->fresh();
     }
-    public function getDataPagination(
+    public function getData(
         $columns = ['*'],
         $relation = [],
         $pagination = 2,
         $orderBy = ['id', 'DESC']
-    )
-    {
+    ){
         $query = $this->model->select($columns)
         ->with($relation)
         ->orderBy($orderBy[0], $orderBy[1])

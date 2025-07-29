@@ -11,7 +11,7 @@ interface BaseRepositoryInterface
     public function syncData($model, $relation, $payload);
     public function createPivot($model, $relation, $payload);
     public function create($payload);
-    public function getDataPagination(
+    public function getData(
         $columns = ['*'],
         $relation = [],
         $pagination=0,

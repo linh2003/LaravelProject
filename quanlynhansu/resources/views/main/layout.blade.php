@@ -14,20 +14,7 @@
 			<div class="pcoded-wrapper">
 				@include('main.components.nav')
 				<div class="pcoded-content">
-					@include('main.components.breadcrumb')
-					<div class="pcoded-inner-content">
-						<div class="main-body">
-							<div class="page-wrapper">
-								<div class="page-body">
-									<div class="row">
-										<div class="col-lg-12">
-											@include($template)
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+					@include($template)
 				</div>
 			</div>
 		</div>

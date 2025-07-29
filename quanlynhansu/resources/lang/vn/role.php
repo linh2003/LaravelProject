@@ -2,7 +2,7 @@
 return [
     'view' => [
         'title' => 'Quản lý vai trò',
-        'tableheading' => 'Danh sách vai trò',
+        'tableHeading' => 'Danh sách vai trò',
         'counter' => 'Hiển thị',
         'column' => [
             'checkbox' => [

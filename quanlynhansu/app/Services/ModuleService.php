@@ -31,7 +31,7 @@ class ModuleService implements ModuleServiceInterface
                 $payloadPermission = [
                     'name' => $item,
                     'canonical' => $payload['code'].'.'.$code,
-                    'description' => $item.' for '.$payload['name'],
+                    'description' => $item.' for '.$payload['code'],
                     'module_id' => $module->id
                 ];
                 $this->permissionRepository->create($payloadPermission);

@@ -5,10 +5,11 @@ return [
         1 => 'Đang hoạt động',
         2 => 'Đã tạm dừng',
     ],
-    'promotion' => [
-        1 => 'Kích hoạt',
-        2 => 'Chưa áp dụng',
+    'gender' => [
+        'male' => 'Nam',
+        'female' => 'Nữ',
     ],
+    'select' => 'Chọn',
     'follow' => [
         // 0 => 'Chọn',
         1 => 'Theo dõi',

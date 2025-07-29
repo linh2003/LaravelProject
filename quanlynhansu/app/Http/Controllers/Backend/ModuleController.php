@@ -24,15 +24,6 @@ class ModuleController extends BackendController
         $this->asset = asset('backend');
     }
 
-    public function switchModule($id){
-        $lang = $this->moduleRepository->findById($id,['canonical']);
-        if($this->moduleService->switchModule($id)){
-            Cache::forget('default_locale');
-            session(['app_locale' => $lang->canonical]);
-            return back();
-        }
-    }
-
     public function store(ModuleStoreRequest $request){
         if($module = $this->moduleService->create($request)){
             return redirect()->route('module.view')->with('success','Insert new module success');

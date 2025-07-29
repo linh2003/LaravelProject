@@ -72,6 +72,7 @@ class PermissionController extends BackendController
         );
     }
     public function index(){
+        $this->authorize('modules', 'user.edit.any');
         $template = 'main.users.permission.index';
         $config = $this->config();
         $permissions = $this->permissionService->getPermissionGroupModule();

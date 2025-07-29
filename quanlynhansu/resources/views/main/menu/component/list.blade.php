@@ -8,7 +8,7 @@
 			{!! $nestableHtml !!}
 			@endif
 			</div>
-			<textarea name="menu_nestable" id="nestable-output" class="form-control"></textarea>
+			<textarea name="menu_nestable" id="nestable-output" class="form-control hide"></textarea>
 			<div class="external-menu-item">
 			@if(isset($nestable))
 				@foreach($nestable as $k => $item)

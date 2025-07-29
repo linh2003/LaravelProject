@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Language extends Model
 {
     use HasFactory, SoftDeletes;
-
     protected $fillable = [
         'name',
         'canonical',

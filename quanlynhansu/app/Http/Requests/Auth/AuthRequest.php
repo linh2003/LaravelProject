@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,8 +26,7 @@ class AuthRequest extends FormRequest
             'password' => 'required',
         ];
     }
-    public function messages()
-    {
+    public function messages(){
         return [
             'email.required' => 'Bạn chưa nhập email',
             'email.email'    => 'Định dạng email đúng abc@domain.suffix',

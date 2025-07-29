@@ -29,11 +29,11 @@
 					</li>
 				</ul>
 				<ul class="nav-right">
-				@foreach($languages as $key => $lang)
+					@foreach($languages as $key => $lang)
 					<li class="header-language">
 						<a href="{{route('admin.language.switch',['id'=>$lang->id])}}" class="{{$lang->active?'active':''}}"><img src="{{asset($lang->image)}}" class="icon-language"/></a>
 					</li>
-				@endforeach
+					@endforeach
 					<li class="header-notification">
 						<div class="dropdown-primary dropdown">
 							<div class="dropdown-toggle" data-toggle="dropdown">
@@ -41,39 +41,39 @@
 							</div>
 						</div>
 					</li>
-					<li class="header-notification">
+					<!-- <li class="header-notification">
 						<div class="dropdown-primary dropdown">
 							<div class="displayChatbox dropdown-toggle" data-toggle="dropdown">
 								<i class="feather icon-message-square"></i>
 							</div>
 						</div>
-					</li>
+					</li> -->
 					<li class="user-profile header-notification">
 						<div class="dropdown-primary dropdown">
 							<div class="dropdown-toggle" data-toggle="dropdown">
-								<img src="{{asset('backend/images/avatar-4.jpg')}}" class="img-radius" alt="User-Profile-Image">
-								<span>{{$user->name}}</span>
+								<img src="{{asset(isset($userGlobal->image) ? $userGlobal->image : 'backend/images/avatar-4.jpg')}}" class="img-radius" alt="User-Profile-Image">
+								<span>{{$userGlobal->name}}</span>
 								<i class="feather icon-chevron-down"></i>
 							</div>
 							<ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-								<li>
-									<a href="">
+								<!-- <li>
+									 <a href="">
 										<i class="feather icon-settings"></i> Settings
+									</a> 
+								</li> -->
+								<li>
+									<a href="{{route('user.edit', $userGlobal->id)}}">
+										<i class="feather icon-user"></i> {{__('system.header.dropdown.profile')}}
 									</a>
 								</li>
-								<li>
-									<a href="">
-										<i class="feather icon-user"></i> Profile
-									</a>
-								</li>
-								<li>
+								<!-- <li>
 									<a href="">
 										<i class="feather icon-mail"></i> My Messages
 									</a>
-								</li>
+								</li> -->
 								<li>
 									<a href="{{route('auth.logout')}}">
-										<i class="feather icon-log-out"></i> Logout
+										<i class="feather icon-log-out"></i> {{__('system.header.dropdown.logout')}}
 									</a>
 								</li>
 							</ul>

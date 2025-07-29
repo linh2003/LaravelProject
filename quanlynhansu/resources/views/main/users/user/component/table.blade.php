@@ -33,10 +33,11 @@
 			@endforeach
 			</td>
             <td class="text-center align-middle switch-status-{{$user->id}}">
+            @php $canEdit = Gate::check('modules', 'user.edit.any'); @endphp
 			@if($user->status == 1)
-				<input type="checkbox" class="js-switch status" data-field="status" data-model="User" data-modelId="{{$user->id}}" value="{{$user->status}}" checked />
+				<input type="checkbox" class="js-switch status" data-field="status" data-model="User" data-modelId="{{$user->id}}" value="{{$user->status}}" checked {{$canEdit ? '' : 'disabled'}} />
 			@else
-				<input type="checkbox" class="js-switch status" data-field="status" data-model="User" data-modelId="{{$user->id}}" value="{{$user->status}}" />
+				<input type="checkbox" class="js-switch status" data-field="status" data-model="User" data-modelId="{{$user->id}}" value="{{$user->status}}" {{$canEdit ? '' : 'disabled'}} />
 			@endif
 			</td>
             <td class="text-center align-middle"></td>
