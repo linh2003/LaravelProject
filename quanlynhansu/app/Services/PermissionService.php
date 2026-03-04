@@ -10,7 +10,6 @@ use App\Repositories\Interfaces\PermissionRepositoryInterface as PermissionRepos
 use App\Repositories\Interfaces\ModuleRepositoryInterface as ModuleRepository;
 use App\Repositories\Interfaces\RoleRepositoryInterface as RoleRepository;
 use Illuminate\Support\Str;
-use App\Enums\Constant;
 
 class PermissionService extends BaseService implements PermissionServiceInterface
 {

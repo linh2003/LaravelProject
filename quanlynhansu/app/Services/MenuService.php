@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Repositories\Interfaces\MenuRepositoryInterface as MenuRepository;
 use App\Repositories\Interfaces\MenuCatalogueRepositoryInterface as MenuCatRepository;
 use Illuminate\Support\Str;
-use App\Enums\Constant;
+use App\Models\Menu;
 use App\Classes\Nestedsetbie;
 
 class MenuService extends BaseService implements MenuServiceInterface
@@ -38,7 +38,7 @@ class MenuService extends BaseService implements MenuServiceInterface
             $this->menuRepository->delete();
             $payload = $request->except(['_token']);
             // dd($payload);
-            $this->menuCatRepository->update(Constant::MAIN_MENU, ['nestable' => $payload['menu_nestable']]);
+            $this->menuCatRepository->update(Menu::MAIN_MENU, ['nestable' => $payload['menu_nestable']]);
             $nestable = json_decode($payload['menu_nestable']);
             foreach ($nestable as $k => $it) {
                 $this->setHierarchy($it, $payload);
@@ -101,10 +101,9 @@ class MenuService extends BaseService implements MenuServiceInterface
         ];
     }
     private function formatPayload($payload = [], $item, $parentId = 0){
-        // dd(Constant::MAIN_MENU);
         return [
             'parent_id' => $parentId,
-            'menu_catalogue_id' => Constant::MAIN_MENU,
+            'menu_catalogue_id' => Menu::MAIN_MENU,
             'icon' => $payload['menu'][$item->id]['icon'],
             'publish' => config('apps.general.publish'),
             'user_id' => Auth::id()

@@ -15,6 +15,49 @@ class LanguageService implements LanguageServiceInterface
         /** @var \App\Repositories\Interfaces\BaseRepositoryInterface */
         $this->languageRepository = $languageRepository;
     }
+    
+    public function storeTranslate($id, $languageId, $model, Request $request) {
+        DB::beginTransaction();
+        try {
+            $payload = $request->except('_token');
+            // dd($payload);
+            // $foreignKey = strtolower(trim($model)).'_id';
+            // $payload[$foreignKey] = $id;
+            $payload['language_id'] = $languageId;
+            $repoModel = ucfirst(trim($model));
+            $repository = 'App\Repositories\\'.$repoModel.'Repository';
+            $repoRelation = 'App\Repositories\\'.$repoModel.'LanguageRepository';
+            $object = null;
+            if (class_exists($repository)) {
+                $repositoryInstance = app($repository);
+                $method = 'get'.$repoModel.'ById';
+                $object = $repositoryInstance->findById($id);
+                $relation = $repositoryInstance->{$method}($id, $languageId);
+                // dd($object);
+                if ($relation == null) {
+                    // $object->languages()->detach([$id, $languageId]);
+                    $repositoryInstance->createPivot($object, 'languages', $payload);
+                }else{
+                    $localKey = strtolower(trim($model)).'_id';
+                    $condition = [
+                        [$localKey, '=', $id],
+                        ['language_id', '=', $languageId],
+                    ];
+                    if (class_exists($repoRelation)) {
+                        // dd($repoRelation);
+                        $repoRelationInstance = app($repoRelation);
+                        $repoRelationInstance->updateCondition($condition, $payload);
+                    }
+                }
+            }
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage(); die();
+            return false;
+        }
+    }
 
     public function switchLanguage($id){
         DB::beginTransaction();

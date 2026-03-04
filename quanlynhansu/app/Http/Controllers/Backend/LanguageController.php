@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Backend\BackendController;
 use App\Http\Requests\Language\LanguageStoreRequest;
+use App\Http\Requests\Module\Vocabulary\TranslateRequest;
 use Illuminate\Http\Request;
 use App\Services\Interfaces\LanguageServiceInterface as LanguageService;
 use App\Repositories\Interfaces\LanguageRepositoryInterface as LanguageRepository;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 // use Illuminate\Support\Facades\App;
 
-class LanguageController extends Controller
+class LanguageController extends BackendController
 {
     protected $languageService;
     protected $languageRepository;
@@ -21,7 +22,41 @@ class LanguageController extends Controller
         $this->languageService = $languageService;
         /** @var App\Repositories\Interfaces\LanuguageRepositoryInterface */
         $this->languageRepository = $languageRepository;
-        $this->asset = asset('backend');
+    }
+    public function storeTranslate($id, $languageId, $model, TranslateRequest $req){
+        $backLink = strtolower(trim($model)).'.view';
+        if ($this->languageService->storeTranslate($id, $languageId, $model, $req)) {
+            return redirect()->route($backLink)->with('success', 'Translate data success');
+        }
+        return redirect()->route($backLink)->with('error', 'Translate data fail. Please try again!');
+    }
+    public function translate($id, $languageId, $model){
+        $langCodeCurrent = session('app_locale');
+        
+        $langFrom = $this->languageRepository->findByCondition(
+            ['id', 'name', 'image'], 
+            [
+                'where' => [['canonical', '=', $langCodeCurrent]]
+            ]
+        );
+        $langTo = $this->languageRepository->findById($languageId);
+        $repoModel = ucfirst(trim($model));
+        $repository = 'App\Repositories\\'.$repoModel.'Repository';
+        $data = [];
+        if (class_exists($repository)) {
+            $repositoryInstance = app($repository);
+            $method = 'get'.$repoModel.'ById';
+            $data = $repositoryInstance->{$method}($id, $langFrom->first()->id);
+            $translate = $repositoryInstance->{$method}($id, $languageId);
+        }
+        $template = 'main.module.'.trim(strtolower($model)).'.component.translate';
+        return view('main.layout', [
+            'template' => $template,
+            'languageTo' => $langTo,
+            'languageFrom' => $langFrom,
+            'data' => $data,
+            'translate' => $translate,
+        ]);
     }
 
     public function switchLanguage($id){

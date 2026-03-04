@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Interfaces\RoleRepositoryInterface as RoleRepository;
 use Illuminate\Support\Str;
-use App\Enums\Constant;
 
 class RoleService extends BaseService implements RoleServiceInterface
 {

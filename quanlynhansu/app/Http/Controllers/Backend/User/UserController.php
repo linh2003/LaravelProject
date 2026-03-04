@@ -11,6 +11,8 @@ use App\Repositories\Interfaces\RoleRepositoryInterface as RoleRepository;
 use App\Repositories\Interfaces\ProvinceRepositoryInterface as ProvinceRepository;
 use App\Http\Requests\User\User\UserStoreRequest;
 use App\Http\Requests\User\User\UserUpdateRequest;
+use Illuminate\Support\Facades\Hash;
+
 
 class UserController extends BackendController
 {

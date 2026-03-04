@@ -1,10 +1,10 @@
 <?php
 return [
-    'index' => [
+    'view' => [
         'title' => 'Manage Role',
         'tableHeading' => 'Role list',
         'counter' => 'Showing',
-        'columnHeading' => [
+        'column' => [
             'checkbox' => [
                 'width' => '15px',
                 'input' => [
@@ -43,7 +43,7 @@ return [
     'message' => [
         'request' => [
             'name' => 'Role name is required.',
-            'slug' => [
+            'code' => [
                 'required' => 'Machine name of role is required.',
                 'unique' => 'Machine name of role already exists. Please use a value different!'
             ]

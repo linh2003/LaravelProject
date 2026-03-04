@@ -2,14 +2,14 @@
 namespace App\Services;
 use App\Services\Interfaces\BaseServiceInterface;
 use Illuminate\Support\Facades\DB;
-use App\Enums\Constant;
+use App\Constants\Number;
 
 class BaseService implements BaseServiceInterface
 {
     protected $language;
     public function __construct(){
         $this->language = DB::table('languages')->where(
-            'id',
+            'active',
             '=', config('apps.general.publish')
         )->first()->id;
     }
@@ -17,7 +17,7 @@ class BaseService implements BaseServiceInterface
         $model = $payload['model'];
         $id = $payload['id'];
         $field = $payload['field'];
-        $value = $payload['value'] == Constant::PUBLISH ? Constant::UNPUBLISH : Constant::PUBLISH;
+        $value = $payload['value'] == Number::PUBLISH ? Number::UNPUBLISH : Number::PUBLISH;
         $repo = 'App\Repositories\\'.ucfirst($model).'Repository';
         // dd($repo);
         if (class_exists($repo)) {

@@ -13,14 +13,14 @@ class NavComposer
         $this->menuService = $menuService;
     }
     public function compose(View $view){
-        $user = Auth::user();
+        $userGlobal = Auth::user();
         $roleUser = [];
-        foreach ($user->roles as $role) {
+        foreach ($userGlobal->roles as $role) {
             $roleUser[] = $role->id;
         }
-        $menus = $this->menuService->setupMainNav($user, $roleUser);
+        $menus = $this->menuService->setupMainNav($userGlobal, $roleUser);
         $view->with([
-            'user' => $user,
+            'userGlobal' => $userGlobal,
             'menus' => $menus,
         ]);
     }

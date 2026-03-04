@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Services\Interfaces\PermissionServiceInterface as PermissionService;
 use App\Repositories\Interfaces\PermissionRepositoryInterface as PermissionRepository;
 use App\Repositories\Interfaces\RoleRepositoryInterface as RoleRepository;
-use App\Enums\Constant;
+use App\Models\Role;
 
 class PermissionController extends BackendController
 {
@@ -82,7 +82,7 @@ class PermissionController extends BackendController
         $config['script'][] = $this->asset.'/js/dataTable.js';
         $config['script'][] = $this->asset.'/js/checkboxes.js';
         $config['permissionModule'] = config('apps.general.permissionModule');
-        $config['quantrirole'] = Constant::QUANTRIROLE;
+        $config['quantrirole'] = Role::QUANTRIROLE;
         return view(
             'main.layout',
             [

@@ -5,10 +5,11 @@ return [
         1 => 'Publish',
         2 => 'Unpublish',
     ],
-    'promotion' => [
-        1 => 'Activate',
-        2 => 'Cancel',
+    'gender' => [
+        'male' => 'Male',
+        'female' => 'Female',
     ],
+    'select' => 'Select',
     'follow' => [
         0 => 'Select',
         1 => 'Follow',

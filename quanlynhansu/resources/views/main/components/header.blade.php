@@ -39,15 +39,28 @@
 							<div class="dropdown-toggle" data-toggle="dropdown">
 								<i class="feather icon-bell"></i>
 							</div>
+							@if(isset($notifications) && count($notifications) > 0)
+							<ul class="show-notification notification-view dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+								<li>
+									<h6>Notifications</h6>
+									<label class="label label-danger">New</label>
+								</li>
+								@foreach($notifications as $notify)
+								<li>
+									<div class="media">
+										<img class="img-radius" src="{{asset(config('apps.user.avatar.default'))}}" alt="">
+										<div class="media-body">
+											<h5 class="notification-user">{{$notify->title}}</h5>
+											<p class="notification-msg">{{$notify->message ?? ''}}</p>
+											<span class="notification-time">30 minutes ago</span>
+										</div>
+									</div>
+								</li>
+								@endforeach
+							</ul>
+							@endif
 						</div>
 					</li>
-					<!-- <li class="header-notification">
-						<div class="dropdown-primary dropdown">
-							<div class="displayChatbox dropdown-toggle" data-toggle="dropdown">
-								<i class="feather icon-message-square"></i>
-							</div>
-						</div>
-					</li> -->
 					<li class="user-profile header-notification">
 						<div class="dropdown-primary dropdown">
 							<div class="dropdown-toggle" data-toggle="dropdown">
@@ -84,3 +97,46 @@
 		</div>
 	</nav>
 </div>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var container = document.querySelector('.header-notification .dropdown-toggle');
+		if (!container) return;
+		var BADGE_CLASS = 'badge bg-c-red';
+		var url = '{{ route("notification.unread.count") }}';
+		function updateNotificationBadge() {
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				},
+				credentials: 'same-origin'
+			})
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (data) {
+				var count = data.count || 0;
+				var badge = container.querySelector('.badge.bg-c-red');
+
+				if (count > 0) {
+					if (!badge) {
+						badge = document.createElement('span');
+						badge.className = BADGE_CLASS;
+						container.appendChild(badge);
+					}
+					badge.textContent = count;
+				} else {
+					if (badge) {
+						badge.remove();
+					}
+				}
+			})
+			.catch(function (error) {
+				console.error('Notification badge error:', error);
+			});
+		}
+		// gọi ngay khi load + lặp lại mỗi 5 giây
+		updateNotificationBadge();
+		setInterval(updateNotificationBadge, 5000);
+	});
+</script>
